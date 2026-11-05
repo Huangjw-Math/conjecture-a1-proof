@@ -1,5 +1,5 @@
 import BoundaryCases
-import NormalOrder
+import General
 
 /- Read actual elaborated types, including legacy dropped typeclasses. -/
 #print ConjectureA1.ConjectureA1
@@ -88,3 +88,41 @@ import NormalOrder
     Commute X (ConjectureA1.ad X Y) → Commute Y (ConjectureA1.ad X Y) →
     ∀ (p : ℕ) (v : V), (X ^ (p + 1)) v = 0 → Y v = 0 →
       ((X + Y) ^ (2 * p + 1)) v = 0)
+
+/- Complete arbitrary-parameter proof and its newly checked dependency layer. -/
+#print axioms ConjectureA1.sparseEuler_coeff
+#print axioms ConjectureA1.sparseEuler_support_subset
+#print axioms ConjectureA1.eq_monomial_of_sparseEuler_eq_zero
+#print axioms ConjectureA1.sparseRootProperty
+#print axioms ConjectureA1.coeff_linePolynomial
+#print axioms ConjectureA1.one_sub_X_pow_expansion
+#print axioms ConjectureA1.coeff_line_product
+#print axioms ConjectureA1.factorial_mul_coeff_line_product
+#print axioms ConjectureA1.support_line_product_subset
+#print axioms ConjectureA1.scalar_line_vanish
+#print axioms ConjectureA1.line_vanish
+#print axioms ConjectureA1.neg_pow_apply
+#print axioms ConjectureA1.x_apply_mono
+#print axioms ConjectureA1.y_mul_x_pow
+#print axioms ConjectureA1.y_apply_mono
+#print axioms ConjectureA1.add_apply_mono
+#print axioms ConjectureA1.sum_range_eq_of_zero
+#print axioms ConjectureA1.left_apply_ordered_term
+#print axioms ConjectureA1.mono_left_line_relation
+#print axioms ConjectureA1.pow_apply_zero_of_le
+#print axioms ConjectureA1.weighted_iterate_vanish
+#print axioms ConjectureA1.weighted_monomial_vanish_of_line
+#print axioms ConjectureA1.vector_monomial_cutoff
+#print axioms ConjectureA1.vector_general
+#print axioms ConjectureA1.vector_conjecture
+
+#check (@ConjectureA1.vector_general :
+  ∀ {K V : Type} [Field K] [CharZero K] [AddCommGroup V] [Module K V]
+    (X Y : Module.End K V),
+    Commute X (X * Y - Y * X) → Commute Y (X * Y - Y * X) →
+    ∀ (p q : ℕ) (v : V), (X ^ (p + 1)) v = 0 → (Y ^ (q + 1)) v = 0 →
+      ((X + Y) ^ (2 * p + 2 * q + 1)) v = 0)
+#print ConjectureA1.vector_conjecture
+#check (@ConjectureA1.vector_conjecture :
+  ∀ (K V : Type) [Field K] [CharZero K] [AddCommGroup V] [Module K V],
+    ConjectureA1.VectorConjecture K V)

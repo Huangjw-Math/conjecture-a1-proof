@@ -10,4 +10,4 @@ require mathlib from git
 
 @[default_target]
 lean_lib «ConjectureA1» where
-  roots := #[`ConjectureA1, `SpecialCases, `VectorCases, `BoundaryCases, `NormalOrder, `AxiomAudit]
+  roots := #[`ConjectureA1, `SpecialCases, `VectorCases, `BoundaryCases, `NormalOrder, `LineRecurrence, `Fewnomial, `LineSystem, `MonomialActions, `WeightedLines, `General, `AxiomAudit]

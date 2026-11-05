@@ -23,14 +23,13 @@ python validate.py
 $leanBin = Join-Path $HOME '.elan/toolchains/leanprover--lean4---v4.31.0/bin'
 $mathlibCache = $env:MATHLIB_CACHE
 # MATHLIB_CACHE 应指向已有 Mathlib checkout，而不是其 build 子目录。
-./formalization/build.ps1 -LeanBin $leanBin -MathlibCache $mathlibCache
-python formalization/validate.py
+python formalization/validate.py --lean-bin $leanBin --mathlib-cache $mathlibCache
 ```
 
 脚本检查版本与缓存，调用 `lake -f lakefile.offline.lean build`。
 项目源文件重新编译，项目生成物写入自身 `.lake/`；外部缓存仅作读取输入。
 这条离线检查路径与从源码重建整个依赖库的范围不同。
 原始编译日志保留在本机忽略目录；公开审查结论和准确范围见
-[形式化进度](../formalization/PROGRESS.md)和[本轮报告](audit-2026-11-05/audit_report.md)。
+[形式化进度](../formalization/PROGRESS.md)和[本轮报告](full-formalization-2026-11-06/report.md)。
 
 `setup.ps1` 是可选的局部工具链获取辅助脚本；已有环境无需重装。

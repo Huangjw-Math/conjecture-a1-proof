@@ -4,7 +4,7 @@ Elementary commutator layer and faithful statement of Conjecture A.1.
 NormalOrder.lean proves arbitrary-power Taylor/normal-order formulas and the
 vector right-annihilator recurrence. BoundaryCases.lean proves every p=0 or
 q=0 case. VectorCases.lean retains the p,q <= 1 results.
-The general positive-parameter theorem is not proved; see PROGRESS.md.
+General.lean proves the arbitrary-parameter theorem; see PROGRESS.md.
 -/
 
 import Mathlib.Algebra.Algebra.Basic
@@ -154,9 +154,9 @@ end FaithfulStatement
 commutators of Y-powers under the two local commutation relations. No ambient
 centrality is needed. `BoundaryCases.lean` proves all zero-parameter families.
 
-The general line-system vanishing argument, the trinomial expansion and assembly
-into a proof of `VectorConjecture` remain open. The written manuscript's
-operator-nilpotence lemma is not substituted for this vector-level target.
+`General.lean` now proves `VectorConjecture` for arbitrary natural parameters.
+The full route uses sparse polynomial uniqueness and weighted line relations;
+no operator-nilpotence lemma is substituted for the vector-level target.
 -/
 
 end ConjectureA1

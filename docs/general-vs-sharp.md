@@ -22,7 +22,9 @@ a+b+2k≥2p+2q+1 的 X^aY^bZ^k 都属于左理想 AX^(p+1)+AY^(q+1)。
 
 ## 形式化
 
-主定理的书面证明、一般最优性的书面证明、有限计算和 Lean 编译是四种不同证据。
-Lean 中目标的 `def` 只定义命题，不证明命题；更强中心假设或元素幂零版本也不等于原猜想。
-实际已编译声明、版本、标准公理及未完成义务以 `../formalization/PROGRESS.md`
-与 `formalization-notes.md` 为准。本次允许交付范围明确的部分形式化。
+原猜想现已由 `ConjectureA1.vector_conjecture K V : VectorConjecture K V` 完整证明，
+覆盖全部自然 p,q，仅用原局部交换和向量湮灭假设。书面一般最优性仍未在 Lean 编码。
+实际根类型、62 个已编译声明及公理检查见
+`../formalization/PROGRESS.md` 和 `formalization-notes.md`。
+
+旧的 ambient-centrality 命题定义保留作兼容，不是本次一般根证明的依赖。

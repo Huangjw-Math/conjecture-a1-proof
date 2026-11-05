@@ -1,76 +1,58 @@
-# Checked partial formalization — 2026-11-05
+# Complete proof of Conjecture A.1 — 2026-11-06
 
-`BoundaryCases.lean` proves Conjecture A.1 for **every natural parameter pair with
-p=0 or q=0**. `VectorCases.lean` also proves p=q=1. These results hold over every
-characteristic-zero field and every vector space, with only the two prescribed
-commutation relations and vector-level annihilation hypotheses.
+Import `General` and use the actual root proof:
 
-`NormalOrder.lean` now proves arbitrary-power Taylor and normal-order formulas,
-and the general vector right-annihilator recurrence.
+```lean
+import General
 
-**The arbitrary positive-parameter theorem is not proved in Lean.**
-`VectorConjecture` defines the full target; it does not assert it.
-
-## Reproduce the checks
-
-The project pins Lean **4.31.0** and Mathlib commit
-`fabf563a7c95a166b8d7b6efca11c8b4dc9d911f`. `lake-manifest.json` also pins
-Mathlib's eight transitive packages.
-
-### Existing compiled dependency cache
-
-Set `LEAN_BIN` to an existing pinned Lean/Lake bin directory and `MATHLIB_CACHE`
-to a Mathlib checkout with compiled imports. Its pinned transitive checkouts may
-be siblings or under its `.lake/packages` directory. From the repository root:
-
-```powershell
-python formalization/validate.py
+example (K V : Type*) [Field K] [CharZero K]
+    [AddCommGroup V] [Module K V] : ConjectureA1.VectorConjecture K V :=
+  ConjectureA1.vector_conjecture K V
 ```
 
-Or supply both paths explicitly:
+`ConjectureA1.vector_general` is the expanded interface. For every characteristic-zero
+field K, every K-vector space V, X,Y in End_K(V), and Z=XY−YX, it proves
+
+```text
+XZ=ZX → YZ=ZY → ∀ p q v,
+  X^(p+1)v=0 → Y^(q+1)v=0 → (X+Y)^(2p+2q+1)v=0.
+```
+
+Both carrier universes are arbitrary and independent. Parameters p,q are all natural
+numbers, including zero. No finite-dimensionality, nonzero-vector, ambient-centrality
+or operator-nilpotence hypothesis is present. The former `VectorConjecture` definition
+is retained unchanged and now has an actual theorem proving it.
+
+## Reproduce the complete check
+
+Pins: Lean **4.31.0**, compiler commit `68218e876d2a38b1985b8590fff244a83c321783`;
+Mathlib **fabf563a7c95a166b8d7b6efca11c8b4dc9d911f**; all eight transitive packages
+are pinned in `lake-manifest.json`.
+
+### Existing compiled cache
+
+Set `LEAN_BIN` to the pinned Lean/Lake bin directory and `MATHLIB_CACHE` to the
+matching Mathlib checkout, whose dependencies are siblings or in `.lake/packages`.
+From the repository root:
 
 ```powershell
 python formalization/validate.py --lean-bin $env:LEAN_BIN --mathlib-cache $env:MATHLIB_CACHE
 ```
 
-Python 3 and PowerShell 5.1+ or PowerShell 7 are required by this wrapper.
-It launches `build.ps1`, verifies the actual Lean version, all nine checkout HEADs,
-their tracked-clean state and the Mathlib toolchain, then runs the offline Lake
-proof target. The compiler freshly checks, in order:
+The wrapper requires Python 3 and native PowerShell. It verifies the compiler,
+all nine checkout HEADs and tracked-clean states, and Mathlib's toolchain.
+It then runs `lake -f lakefile.offline.lean build`, freshly compiling all twelve
+material modules in dependency order. The fresh project output comes first in
+`LEAN_PATH`; imported dependency artifacts are trusted read-only cache inputs.
 
-```text
-ConjectureA1, SpecialCases, VectorCases, BoundaryCases, NormalOrder, AxiomAudit
-```
+Validation reads this invocation's compiler output, not an old log. Every proved
+declaration has an actual `#print axioms` probe. All root-level Lean files are
+scanned after masking nested comments, strings, raw strings and quoted identifiers.
+Local transcripts and the JSON report stay in ignored `evidence/`.
 
-The target always invokes Lean for every module, writes proof artifacts into
-`.lake/build/lib/lean`, and places that fresh output first in `LEAN_PATH`.
-External compiled caches are trusted, read-only inputs; they are not rebuilt.
-A locked Lake-only dependency need not have a compiled library when none of these
-modules imports it. Required missing artifacts fail in the compiler.
+### Dependency-managed environment
 
-The diagnostic scanner covers every root-level `*.lean` file (the six material
-modules and both Lake configurations), masking nested comments, ordinary/raw
-strings and Lean quoted identifiers. Its five regression tests run with:
-
-```text
-python -m unittest discover -s formalization -p test_validate.py
-```
-
-Validation checks **this invocation's actual compiler
-output** for every declaration's transitive axioms and every material module's
-successful compilation. It never accepts a historical build log. Local output is
-written to ignored `evidence/validation-build.log` and
-`evidence/validation-report.json`; no machine logs are part of the public artifact.
-
-For a build without the Python report, the existing entry point remains:
-
-```powershell
-.\formalization\build.ps1 -LeanBin $env:LEAN_BIN -MathlibCache $env:MATHLIB_CACHE
-```
-
-### Ordinary dependency-managed environment
-
-With elan/Lean 4.31.0 and Git available, the standard route is:
+With elan and the pinned Lean version available:
 
 ```text
 cd formalization
@@ -78,200 +60,101 @@ lake exe cache get
 python validate.py
 ```
 
-Unset `MATHLIB_CACHE` for this route. `validate.py` then invokes the normal Lake
-build and a fresh proof/axiom pass using `lake env`. This download/dependency-managed
-route was not run in the current audit; the existing-cache route above was run.
+Unset `MATHLIB_CACHE` for this route. The wrapper runs the ordinary Lake build and
+a fresh proof/axiom pass through `lake env`. This online acquisition route and a
+from-source Mathlib rebuild were not run in the current check.
 
-`setup.ps1` remains an optional, source-only archive downloader. It accepts an
-existing Node executable through `-NodePath`; it does not install the transitive
-Mathlib dependencies or compiled caches. Prefer the ordinary Lake route for a new
-environment.
+The optional `setup.ps1` is a source/archive downloader, not a substitute for all
+transitive dependencies and compiled caches.
 
-## Target fidelity
+## Proof chain
 
-`ConjectureA1.VectorConjecture K V` explicitly binds `[Field K] [CharZero K]`,
-`[AddCommGroup V] [Module K V]`. For `X,Y : Module.End K V`, put `Z=XY-YX`.
-Its assumptions are exactly `Commute X Z` and `Commute Y Z`; for natural `p,q`
-and `v : V`, its conclusion is:
+1. **Normal ordering:** `NormalOrder.lean` proves Taylor and arbitrary commutator
+   powers using only the two local commuting relations.
+2. **Sparse uniqueness:** `Fewnomial.lean` proves `SparseRootProperty K`. The Euler
+   operator `X*f' - e*f` removes a support index, while `(X-1)^m` divisibility drops
+   by at most one order. Induction gives sparse-root uniqueness at 1, including m=0.
+3. **Finite line kernel:** `LineSystem.lean` forms the exponential generating
+   polynomial U and H=(1-X)^(p+1)U. The actual recurrence kills its middle
+   coefficients. Its support lies in `[lo,b0)` and `(M,D+p+1]`; the bound
+   `(b0-lo)+(D+p+1-M)≤p+1` gives H=0. Full dual separation lifts the result to any
+   vector space without assuming finite dimension.
+4. **Operator bridge:** `MonomialActions.lean` obtains the recurrence by a genuine
+   left multiple of the right-annihilator identity. Range changes use zero
+   coefficients, not false individual-monomial vanishing assertions.
+5. **Indices:** `WeightedLines.lean` encodes positive and negative line differences
+   with natural lower endpoints and proves every cutoff monomial vanishes.
+   Odd cutoff weight excludes zero line difference.
+6. **Assembly:** `General.lean` supplies the proved sparse property and line kernel,
+   discharging the auxiliary interfaces. A three-term left-action rule gives
+   weighted induction and the full original conclusion.
 
-```text
-X^(p+1) v = 0 → Y^(q+1) v = 0 → (X+Y)^(2p+2q+1) v = 0.
-```
+The formal route uses one sparse-support kernel for all line regions. It does
+not need a PBW algebra, matrix determinant construction or explicit trinomial sum.
+`SparseRootProperty` and `LineVanishing` are definitions used for modular interfaces;
+neither remains an assumption of `vector_general` or `vector_conjecture`.
 
-The elaborated definition is printed by `AxiomAudit.lean`. The file also has typed
-signature checks for the definition and the two new infinite boundary families.
-No result assumes ambient centrality, finite dimension, a nonzero vector, or
-operator annihilation `X^(p+1)=0`.
+## Complete inventory: 62 proved declarations
 
-The old `ConjectureA1.ConjectureA1 R V` name and meaning are retained for legacy
-callers. Its elaborated signature requires only a ring and module (the original
-unused rational-algebra section instance is dropped), and assumes ambient
-centrality. It is a different, unproved proposition and is not used by the new
-vector theorems.
+All mathematical names have prefix `ConjectureA1.`; definitions are not counted.
+`AxiomAudit.lean` contains probes and signature checks, not new mathematical theorems.
 
-## Complete inventory: 37 proved lemmas/theorems
+| Module | Proved declarations | Main contents |
+|---|---:|---|
+| `ConjectureA1` | 12 | Elementary commutators and one-generator power identities |
+| `SpecialCases` | 2 | Integral degree-three and degree-five certificates |
+| `VectorCases` | 6 | Original p,q≤1 interfaces, retained for existing callers |
+| `BoundaryCases` | 8 | Arbitrary p=0/q=0 families and weighted boundary vanishing |
+| `NormalOrder` | 9 | Taylor, iterated commutators, normal ordering, right line relation |
+| `LineRecurrence` | 0 | Shared scalar coefficient and proposition definitions |
+| `Fewnomial` | 4 | Euler coefficients/support and sparse-root uniqueness |
+| `LineSystem` | 7 | Generating coefficients, support bounds, scalar/vector uniqueness |
+| `MonomialActions` | 8 | Ordered-monomial actions and legal left-anchor relation |
+| `WeightedLines` | 3 | Power-zero propagation, weighted iteration and line-index assembly |
+| `General` | 3 | Cutoff monomials, expanded general theorem and faithful root proof |
 
-All names below have namespace prefix `ConjectureA1.`. Natural coefficients are
-additive multiples. In ring statements let `z=xy-yx`.
+`vector_monomial_cutoff` proves vanishing at weight `2p+2q+1`; `vector_general`
+then proves the original sum-power statement. Earlier specialized interfaces are
+unchanged. Optional SymPy certificate discovery is not a trusted proof dependency
+and was not rerun for this continuation.
 
-### Elementary ring layer — 12 declarations
+## Actual machine evidence and semantic review
 
-`ad_def`, `ad_add`, `ad_zero`, `ad_neg`, `ad_one`, `ad_mul`, `ad_pow_succ` and
-`ad_swap` express the commutator convention, additive/Leibniz rules, and sign.
-They hold in every ring.
-
-`ad_pow_of_commute`, `ad_pow_eq`, `mul_pow_normal_order` and
-`pow_mul_normal_order` prove the one-generator power rules, with only the
-specified generator commuting with `z`. In particular:
-
-```text
-[x,y^n] = n • (y^(n-1) z),
-x y^(n+1) = y^(n+1) x + (n+1) • (y^n z).
-```
-
-### Integral certificates and small vector cases — 8 declarations
-
-`two_mul_add_pow_five` and `two_mul_add_pow_three` are explicit ring identities
-with right factors `x²,y²` and `x²,y`, respectively. Lean checks the identities
-modulo the two commutation relations with `noncomm_ring`.
-
-`vector_two_cancel`, `vector_p_one_q_one`, `vector_p_one_q_zero`,
-`vector_p_zero_q_one`, `vector_p_zero_q_zero` and `vector_parameters_le_one`
-prove and assemble the p,q≤1 vector cases. The zero-zero theorem needs neither
-CharZero nor commutator assumptions.
-
-`certificate.py` can rediscover the two explicit identities using optional
-SymPy 1.14.0. Python/SymPy is not a trusted proof or build dependency.
-
-### Arbitrary boundary parameters — 8 new declarations
-
-- `vector_nat_cancel`: a positive natural coefficient cancels in a
-  characteristic-zero vector space.
-- `boundary_x_action`: if `Xv=0`, then
-  `X (Z^a Y^(b+1) v) = (b+1) • (Z^(a+1) Y^b v)`.
-  This action rule itself does not require CharZero.
-- `boundary_monomial_vanish`: if `Xv=0` and `Y^(q+1)v=0`, then
-  `Z^a Y^b v=0` whenever `a+b>q`.
-- `boundary_add_action`: on the same X-killed vector, left multiplication by
-  `X+Y` sends `Z^aY^b v` to
-  `Z^aY^(b+1)v + b • (Z^(a+1)Y^(b-1)v)`.
-  This rule does not require CharZero; b=0 is included.
-- `boundary_weighted_vanish`: under the two boundary vector hypotheses,
-  `(X+Y)^n Z^a Y^b v=0` whenever `n+2a+b>2q`.
-- `vector_p_zero`: `Xv=0`, `Y^(q+1)v=0` imply `(X+Y)^(2q+1)v=0`, all natural q.
-- `vector_q_zero`: the symmetric result for all natural p, with exponent `2p+1`.
-- `vector_boundary_or_le_one`: exactly the frozen exponent `2p+2q+1` when
-  `p=0 ∨ q=0 ∨ (p≤1 ∧ q≤1)`.
-
-The boundary argument first inducts on `a`: applying X to a vanished monomial
-with Y-exponent b+1 yields a nonzero coefficient b+1 times the next monomial.
-A second induction on n uses the action rule, which raises weight `2a+b` by one.
-This proves an infinite family directly on vectors, without constructing PBW.
-
-### Arbitrary-power normal ordering — 9 new declarations
-
-`innerEnd_apply`, `mulLeft_pow_apply`, `mulRight_pow_apply` and
-`innerEnd_commute_right` package the additive endomorphism
-`innerEnd x = (left multiplication by x) - (right multiplication by x)`.
-
-`taylor` proves, in every ring and with no commutation assumptions:
-
-```text
-x^n w = ∑ j=0..n, choose(n,j) • ((ad x)^[j](w) x^(n-j)).
-```
-
-`ad_nsmul` expresses additivity on natural multiples.
-`ad_iterate_pow` proves, under just xz=zx and yz=zy:
-
-```text
-(ad x)^[j](y^b) = b.descFactorial(j) • (y^(b-j) z^j).
-```
-
-`normal_order` combines them, for all natural a,b including zero:
-
-```text
-x^a y^b = ∑ j=0..a,
-  (choose(a,j) * b.descFactorial(j)) • (y^(b-j) z^j x^(a-j)).
-```
-
-`vector_right_line_relation` swaps X,Y and evaluates the normal-order identity
-on a vector killed by `X^(p+1)`. For every natural p,B:
-
-```text
-(∑ j=0..B, (B.descFactorial(j) * choose(p+1,j)) •
-  (X^(p+1-j) (-Z)^j Y^(B-j))) v = 0.
-```
-
-Terms past either relevant endpoint have coefficient zero; the power `(-Z)^j`
-retains the sign explicitly. This is a vector right-annihilator relation, not
-a two-sided-ideal assertion. It does not require CharZero.
-
-The Taylor proof applies the ordinary binomial theorem to commuting additive
-endomorphisms `innerEnd x` and right multiplication by x. No custom binomial
-axiom, PBW theorem or operator nilpotence is introduced.
-
-## Current machine evidence and trust boundary
-
-The current existing-cache run freshly compiled all six material modules and
-checked all 37 declaration axiom sets. Source diagnostics found no unfinished
-proof terms, user axioms, unsafe declarations or `native_decide` calls.
-
-Allowed transitive axioms are subsets of:
+The current complete build checked all twelve material modules and all **62/62**
+transitive axiom sets, with compiler/build exit 0 and `passed=true`.
+No unfinished terms, user axioms, `unsafe` or `native_decide` occur in material code.
+The complete root has exactly the standard foundations:
 
 ```text
 propext, Classical.choice, Quot.sound
 ```
 
-The two new boundary root theorems use those three standard foundations;
-the normal-order/Taylor root declarations also use those three. Exact per-declaration
-sets are printed by `AxiomAudit.lean` and retained in the generated validation
-report. No independent alternative kernel implementation was run.
+The full source/type readback and separate contract comparison are recorded under
+`docs/full-formalization-2026-11-06/`; they are independent of the authors' checks.
+The original duplicated namespace produces one preserved compatibility linter warning.
+No alternative kernel implementation or full dependency source rebuild was run.
 
-The checked compiler was Lean 4.31.0, commit
-`68218e876d2a38b1985b8590fff244a83c321783`. All nine dependency checkout HEADs
-matched the lockfile, all had no tracked changes, and Mathlib's `lean-toolchain`
-matched. Imported `.olean` files remain trusted prebuilt inputs of those
-checkouts; this is not a from-source rebuild of all Mathlib.
+## Scope beyond the root
 
-The preserved legacy duplicated namespace produces one linter warning.
-Independent type readback and a separate contract comparison accepted this
-precisely partial scope. A separately authored typed Guard also compiled. See
-[the independent review](../docs/audit-2026-11-05/lean-review.md).
+The all-parameter tensor sharpness construction is a separately audited written
+result, not a Lean theorem in this project. The explicit trinomial formula and
+all higher-weight universal-algebra statements are not separately formalized;
+they are not missing dependencies of the complete original root proof.
 
-## Exact remaining obligations for arbitrary positive p,q
+The legacy `ConjectureA1.ConjectureA1 R V` remains a different, unproved proposition:
+its unused rational-algebra binder is absent from its actual type, and it requires
+ambient centrality. The new full root does not use that proposition.
 
-1. Instantiate the general right-annihilator identity on each finite
-   weighted-degree line `u_b = X^(b+δ)Y^bZ^(m-b)v`, using valid natural index
-   ranges and explicit zero endpoints. The arbitrary-power algebraic identity
-   and its right-annihilator evaluation are now proved, but this indexed
-   line-family packaging is not.
-2. Prove the triangular elimination arguments for the outer δ ranges.
-3. Prove the scalar fewnomial multiplicity bound and its vector-valued
-   consequence for the interior line systems, including any required
-   vector/separating-functional argument.
-4. Show `(X+Y)^(2p+2q+1)v` is a linear combination of the vanished monomials
-   and assemble a theorem of type `VectorConjecture K V`.
+## Dated continuation record
 
-A full explicit trinomial expansion is still absent, but a direct induction on
-the weighted monomial span could replace that formula for the final assembly.
-No PBW linear-independence construction is required by this direct vector route.
-The boundary vanishing lemma is deliberately not generalized to arbitrary p:
-its proof uses `Xv=0`, and that hypothesis cannot be replaced by `X^(p+1)v=0`
-in the differentiating step.
+2026-11-05: snapshot edd9dd0 contained 37 checked declarations, including boundary
+families and arbitrary-power identities; the general theorem was not yet proved.
+The attempted draft PR was denied by the GitHub integration with HTTP 403.
 
-## Dated work record
-
-2026-11-05: independently recompiled the inherited 20 declarations, verified the
-pinned environment, and continued the general formalization without editing the
-paper or verification scripts. Added the two arbitrary zero-parameter families,
-weighted boundary vanishing, the all-power Taylor/normal-order layer and the
-general right-annihilator recurrence (17 new declarations).
-
-Removed obsolete unproved Lean-code comment blocks and machine/session-specific
-material from the public progress report. The build verifies all locked source
-checkouts and puts fresh local modules first. Validation now runs a fresh build
-instead of consuming an earlier log. Fixed the inherited quoted-identifier
-mask delimiters using ASCII Unicode escapes and added five scanner regression
-tests. The optional downloader accepts a generic
-Node executable path; private evidence is ignored. No old branch files were
-removed, and no commit or publication was performed by this formalization owner.
+2026-11-06: the user made complete original formalization a gate before PR creation.
+Added the six modules from `LineRecurrence` through `General`, 25 new proved
+declarations. Independent leaf authors supplied sparse uniqueness, the line kernel
+and the operator bridge; the coordinator proved the natural index/weighted assembly.
+The first full audit failed on an extra nonexistent probe extracted from a comment;
+removing that probe, without removing any declaration check, gave the successful
+12-module/62-probe run. Original proof hypotheses and the frozen target are unchanged.

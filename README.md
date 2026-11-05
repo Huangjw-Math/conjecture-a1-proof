@@ -1,6 +1,6 @@
-# Conjecture A.1（Liu–Wu–Zhang–Zhou）的证明、sharp 性分析与形式化尝试
+# Conjecture A.1（Liu–Wu–Zhang–Zhou）的证明、sharp 性分析与 Lean 4 形式化
 
-> **2026-11-05 接续审查。** 主证明与全参数最优性构造已重新独立审查，并修复附命题的底环假设和零参数措辞。两份 PDF 已从本次 TeX 重编。Lean 新增任意零参数边界家族；一般主定理仍未完成形式化。详见[本轮报告](docs/audit-2026-11-05/audit_report.md)。
+> **2026-11-06 完整形式化。** `ConjectureA1.vector_conjecture K V` 已证明原猜想的全部自然参数，保持原有两条局部交换关系和向量湮灭假设。12 个模块、62 个引理/定理已通过固定版本的新鲜构建及公理检查。主证明与全参数最优性的书面审查及两份修订 PDF 保留；最优性构造仍是书面结果。详见[完整形式化报告](docs/full-formalization-2026-11-06/report.md)。
 
 **English abstract.** This repository contains a complete proof of *Conjecture A.1* from
 S.-Q. Liu, C.-Z. Wu, Y. Zhang, X. Zhou, *Drinfeld–Sokolov hierarchies and diagram automorphisms
@@ -9,8 +9,8 @@ For a vector space over any characteristic-zero field, if
 $X,Y,Z\in\operatorname{End}(V)$ satisfy $Z=[X,Y]=XY-YX$, $XZ=ZX$, $YZ=ZY$, and
 $X^{p+1}v=Y^{q+1}v=0$ for natural $p,q$, then $(X+Y)^{2p+2q+1}v=0$. Alongside the paper we ship
 (a) a technical note collecting every tool used, (b) an all-parameter tensor-model proof of sharpness,
-(c) exact rational-arithmetic verification scripts, and (d) a compiled **partial** Lean 4
-formalisation with a precise statement-by-statement gap report.
+(c) exact rational-arithmetic verification scripts, and (d) a compiled Lean 4 proof of
+the full conjecture, with explicit scope, dependency pins and axiom checks.
 
 ---
 
@@ -34,15 +34,14 @@ $$X^{p+1}v=0,\quad Y^{q+1}v=0,\quad Z=[X,Y],\quad XZ=ZX,\ YZ=ZY
 | sharp 性：$p=0$ 或 $q=0$ | ✅ 严格证明（显式反例模型） |
 | sharp 性：$p,q\le 6$ | ✅ 精确有理数验证（非证明） |
 | sharp 性：一般 $(p,q)$ | ✅ 张量模型给出一般书面证明，含零参数 |
-| Lean 4 形式化 | ✅ **部分已编译**：一般辅助引理、$p=0$ 或 $q=0$ 的任意参数家族及 $p=q=1$；一般目标仍为 `def` |
+| Lean 4 原猜想 | ✅ **全部自然参数已证明**：`vector_conjecture K V : VectorConjecture K V`；62 个声明通过编译与公理查询 |
 
-> **一般 Conjecture A.1 尚未完整形式化。** 已证明家族使用原假设的局部交换性和向量湮灭条件；
-> 未使用 `sorry`、额外公理或 `native_decide`。标准公理集合、真实编译命令、声明范围与剩余义务见
-> [`formalization/PROGRESS.md`](formalization/PROGRESS.md)、[形式化说明](docs/formalization-notes.md)
-> 和[独立 Lean 审计](docs/audit-2026-11-05/lean-review.md)。
+> 完整根定理在 `formalization/General.lean`。它不再保留少项式或直线消失作为额外假设，
+> 使用原题的任意特征零域、任意维向量空间与全部自然参数。实际类型、证明路线和复现命令见
+> [`formalization/PROGRESS.md`](formalization/PROGRESS.md) 与[形式化说明](docs/formalization-notes.md)。
 
 
-## 3. 证明的结构（三段）
+## 3. 书面证明的结构（三段）
 
 1. **化归**：取 Heisenberg 代数 $A=U(\mathfrak h_1)=\mathbb K\langle X,Y,Z\rangle/([X,Y]=Z,\ Z\text{ 中心})$，
    左理想 $I=AX^{p+1}+AY^{q+1}$。猜想 $\iff (X+Y)^{2p+2q+1}\in I$（万能模 $M=A/I$，$v_0=1+I$）。
@@ -72,7 +71,11 @@ formalization/
   SpecialCases.lean, VectorCases.lean  已核验的有限恒等式和四个向量特例
   BoundaryCases.lean              任意 p=0 或 q=0 的向量定理
   NormalOrder.lean                一般 Taylor、正规序及向量直线关系
-  PROGRESS.md                    形式化范围、版本、命令和未完成义务
+  LineRecurrence.lean, Fewnomial.lean  直线接口与少项式唯一性
+  LineSystem.lean                 标量与任意向量空间的有限直线消失
+  MonomialActions.lean, WeightedLines.lean  算子关系与加权次数组装
+  General.lean                    全部自然参数的原猜想根证明
+  PROGRESS.md                    完整根定理、证明机制、版本与命令
   lakefile.lean, lean-toolchain   Lake 工程与版本钉住
   setup.ps1, build.ps1           可选工具链获取与固定版本编译入口
 verification/

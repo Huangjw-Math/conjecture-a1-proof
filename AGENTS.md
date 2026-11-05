@@ -28,33 +28,34 @@ credentials or raw machine logs. Keep only portable source, precise reports and
 reproduction commands. Never rewrite or force-push existing published branches
 without the user's confirmation. Keep other owners' changes intact.
 
-## Current evidence and open work
+## Current evidence and publication gate
 
-Takeover checked upstream main f8f7235 and prior fork branch f4fd266; the old
-worktree was clean and exactly two commits ahead. The clean review branch does
-not include those run-record commits in its ancestry.
+The original Conjecture A.1 now has an actual general Lean proof:
+`ConjectureA1.vector_conjecture K V : VectorConjecture K V`, implemented in
+formalization/General.lean. It covers every natural p,q and preserves exactly the
+original field/vector-space/local-commutation/vector-annihilation hypotheses.
+The shared sparse-root and line-vanishing interfaces are discharged by proved
+implementations; they do not remain root assumptions.
 
-The written main theorem and all-parameter tensor sharpness passed current
-independent mathematical audit after the local repairs recorded below. Both
-PDFs are regenerated from the final TeX and visually checked (15 and 6 pages).
+Lean 4.31.0 and the pinned Mathlib/eight dependencies freshly compiled all twelve
+material modules. All 62 proved declarations returned allowed transitive axiom
+sets; the full root uses propext, Classical.choice and Quot.sound. Material source
+contains no unfinished terms, user axioms, unsafe or native_decide. A fresh source
+readback and separate original-contract comparison passed the full-root semantic gate.
 
-Lean 4.31.0 with pinned Mathlib and eight dependencies compiled all six material
-modules, 37 proved declarations in total (17 new). Checked infinite boundary
-families are p=0 or q=0; p=q=1 is also proved. General Taylor, normal ordering
-and the right-annihilator relation are proved. The positive-parameter line
-system, triangular elimination, fewnomial module argument and final general
-assembly remain open in Lean. The general target is still a proposition def.
+The written main theorem and all-parameter tensor sharpness retain the prior
+independent mathematical audit. Paper/verification sources and their validated
+PDFs are unchanged in this continuation; their existing same-input checks remain
+valid. General tensor sharpness is not formalized and is not a root dependency.
 
-The exact Python suite passed nine scripts and ten regression groups, with
-finite ranges and failure-path evidence in docs/audit-2026-11-05/exact-checks.md.
-Scanner tests pass five groups. `python formalization/validate.py` always builds
-fresh material artifacts and queries every theorem's transitive axioms.
-Existing imported dependency oleans are trusted cache inputs, not rebuilt here.
+The user requires a complete original root proof before any draft PR submission.
+Do not submit another partial-result PR. The previous GitHub integration returned
+HTTP 403; repository/PR connection permission is a publication dependency, separate
+from the completed mathematics. No credential workaround or merge is authorized.
 
-Independent source/type readback and separate contract comparison passed for the
-stated partial scope. An independently authored typed Guard compiled successfully.
-See docs/audit-2026-11-05/lean-review.md. The general target remains open.
-No merge is authorized.
+Current theorem/build details are in formalization/PROGRESS.md and
+`docs/full-formalization-2026-11-06/`. Earlier 2026-11-05 partial reviews apply to
+their recorded snapshots, not to the new full-root completion status.
 
 ## Decisions and work record — 2026-11-05
 
@@ -121,3 +122,55 @@ No merge is authorized.
   necessary repository/PR permission, then the coordinator can retry the same
   authorized draft-creation action. The user may instead create the draft from
   the published branch. No alternate credential route or merge was attempted.
+
+## Complete-formalization continuation — 2026-11-05
+
+- User changed the acceptance gate: finish the arbitrary-p,q original Lean theorem
+  before submitting a draft PR. Do not publish another partial-result PR.
+- Starting snapshot edd9dd0 is clean and already pushed; prior machine evidence
+  remains valid for its unchanged 37 declarations. The GitHub 403 is a later
+  publication dependency, not a reason to stop mathematical work.
+- Chosen formal route retains normal ordering and weighted line relations.
+  A scalar sparse-root uniqueness theorem and a vector finite-convolution kernel
+  will eliminate all three line regions uniformly. Natural lower endpoints encode
+  negative line differences, avoiding unnecessary integer-exponent machinery.
+- Shared interfaces are frozen in LineRecurrence.lean: SparseRootProperty,
+  lineCoeff and LineRecurrence. The full final theorem must discharge the sparse
+  uniqueness premise, not retain it as a new hypothesis. No placeholders or new
+  axioms are accepted. Root owns these interfaces and the endomorphism assembly;
+  independent obligation owners write separate leaf modules. No shared Lake builds
+  run concurrently; direct per-module Lean compilation uses read-only external caches.
+
+## General-proof completion work — 2026-11-06
+
+- Completed the user's new acceptance gate at the proof layer: vector_general
+  and vector_conjecture in General.lean were directly compiled for arbitrary natural parameters.
+  Root type/axiom inspection gives the faithful target and only standard foundations.
+- Proved SparseRootProperty by Euler support elimination; proved the exact finite
+  generating-polynomial kernel and lifted it to arbitrary vector spaces by full dual
+  separation. These are actual Lean theorems, not newly assumed analytic facts.
+- Proved genuine left-anchor monomial relations, with out-of-range terms removed by
+  zero coefficients. Natural lower endpoints encode negative line differences.
+  The uniform support kernel handles all line regions, and weighted induction
+  assembles the original sum-power conclusion without PBW or an explicit trinomial sum.
+- Added 25 proved declarations across six new modules, retaining all 37 earlier
+  interfaces. The successful fresh full run checks 12 material modules and 62/62
+  declaration axiom sets. A preceding audit attempt failed on a nonexistent probe
+  accidentally parsed from a comment; removed only that extra probe and reran the
+  complete build. No mathematical obligation or actual declaration check was removed.
+- Froze the full root's eight-module mathematical dependency packet for a fresh
+  blind reader. A separate original-contract comparison follows that readback.
+  No new PR is attempted until these full-proof acceptance checks finish.
+
+- Updated current README, PROGRESS, formalization notes and citation description to
+  the actual complete root. The CFF had still described general sharpness as open
+  and Lean as uncompiled; its mathematical description now matches the checked
+  results, preserving the original author/release fields. Historical partial
+  audits are clearly linked as earlier snapshots rather than current blockers.
+
+- Final independent acceptance passed: the blind reader reconstructed the full
+  original mathematical statement without the informal target. A separate comparator
+  checked the paper contract and compiled a new raw-commutator, independent-universe
+  Guard, including the literal three-operator formulation. It found no remaining
+  root obligations; ten independent axiom checks used only the standard three.
+  Reports and reusable Guard are in docs/full-formalization-2026-11-06.

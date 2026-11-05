@@ -1,14 +1,16 @@
 cff-version: 1.2.0
 message: "If you use this material, please cite it as below (and cite the original paper too)."
-title: "A proof of Conjecture A.1 of Liu-Wu-Zhang-Zhou, with sharpness analysis and a partial Lean formalisation"
+title: "A proof of Conjecture A.1 of Liu-Wu-Zhang-Zhou, with all-parameter sharpness and a Lean 4 proof"
 abstract: >-
-  Complete proof of Conjecture A.1 from the Appendix A of Liu-Wu-Zhang-Zhou,
-  Comm. Math. Phys. 375 (2020) 785-832: for central Z = [X,Y] = XY - YX and
-  X^{p+1}v = Y^{q+1}v = 0 one has (X+Y)^{2p+2q+1}v = 0, for all p, q >= 0.
-  The repository also contains a technical note on the methods used, a rigorous
-  sharpness analysis (sharp for p = 0 or q = 0; verified for p,q <= 6;
-  open in general), exact rational arithmetic verification scripts, and a
-  partial (uncompiled) Lean 4 formalisation with a detailed gap report.
+  A proof of Conjecture A.1 proposed in Appendix A of Liu-Wu-Zhang-Zhou,
+  Comm. Math. Phys. 375 (2020) 785-832. Over every characteristic-zero field,
+  let X,Y be linear endomorphisms of any vector space and Z = XY - YX satisfy
+  XZ = ZX and YZ = ZY. For all natural p,q and vectors v, the hypotheses
+  X^{p+1}v = Y^{q+1}v = 0 imply (X+Y)^{2p+2q+1}v = 0.
+  The repository includes a complete Lean 4 proof of this original statement,
+  an all-parameter written tensor construction proving sharpness, technical
+  notes, and finite exact rational-arithmetic checks. The sharpness construction
+  is not itself formalized in Lean.
 authors:
   - family-names: "Huang"
     given-names: "Jinwen"

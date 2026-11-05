@@ -13,7 +13,7 @@ target proofcheck pkg : Unit := do
     let lean := (← IO.getEnv "A1_LEAN").getD "lean"
     let paths := (← IO.getEnv "LEAN_PATH").getD ""
     let sep := if System.Platform.isWindows then ";" else ":"
-    for name in #["ConjectureA1", "SpecialCases", "VectorCases", "BoundaryCases", "NormalOrder", "AxiomAudit"] do
+    for name in #["ConjectureA1", "SpecialCases", "VectorCases", "BoundaryCases", "NormalOrder", "LineRecurrence", "Fewnomial", "LineSystem", "MonomialActions", "WeightedLines", "General", "AxiomAudit"] do
       let result ← IO.Process.output {
         cmd := lean
         args := #["-o", (outDir / s!"{name}.olean").toString,

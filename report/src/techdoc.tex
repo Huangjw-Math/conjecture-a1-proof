@@ -1,0 +1,347 @@
+% !TEX program = xelatex
+\documentclass[11pt,UTF8]{ctexart}
+
+\usepackage[a4paper,margin=2.4cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathrsfs}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\setlist{itemsep=2pt,topsep=3pt}
+\linespread{1.15}
+
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{proposition}[theorem]{命题}
+\newtheorem{corollary}[theorem]{推论}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{定义}
+\newtheorem{remark}[theorem]{注}
+\newtheorem{example}[theorem]{例}
+
+\newcommand{\ad}{\operatorname{ad}}
+\newcommand{\End}{\operatorname{End}}
+\newcommand{\chr}{\operatorname{char}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\hh}{\mathfrak{h}}
+
+\title{\bfseries 技术文档：\\
+Heisenberg 代数、广义二项式定理与少项式重数界\\
+\large ——《关于 Conjecture A.1 的一个证明》所用工具汇总}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\noindent
+本技术文档汇总主报告\footnote{主报告：《关于 Liu--Wu--Zhang--Zhou 附录 A 中 Conjecture A.1 的一个证明》，
+其中本文件的内容以“附录 A（附注）”的形式给出。}所用到的六类工具，并给出每一件的
+\emph{陈述、证明、用途与失效边界}。所有陈述均为自足的，可在不读主报告的情况下单独核对。
+
+\tableofcontents
+
+\section{正规序与 Poincar\'e--Birkhoff--Witt 基}\label{sec:pbw}
+
+\begin{definition}[Heisenberg 代数]
+设 $\K$ 特征为零，$\hh_1=\K X\oplus\K Y\oplus\K Z$ 满足 $[X,Y]=Z$、$[Z,\hh_1]=0$。
+记 $A=U(\hh_1)=\K\langle X,Y,Z\rangle/(XY-YX-Z,\ ZX-XZ,\ ZY-YZ)$。
+由 PBW 定理 \cite{Dixmier}，集合
+\[
+\{\,X^{a}Y^{b}Z^{k}\;:\;a,b,k\ge0\,\}
+\]
+是 $A$ 的 $\K$-基；称 $X^{a}Y^{b}Z^{k}$ 为\textbf{正规序（normal ordered）}单项式。
+赋 $\deg X=\deg Y=1$、$\deg Z=2$，则 $A=\bigoplus_{d\ge0}A_d$ 为分次代数，$A_d$ 以
+$\{X^aY^bZ^k: a+b+2k=d\}$ 为基。
+\end{definition}
+
+\begin{remark}[为什么“正规序”是关键]
+$A$ 中唯一的乘法非交换性表现为 $YX=XY-Z$：把 $Y$ 从左搬到右、或把 $X$ 从右搬到左，
+每搬一次就产生一个 $Z$（中心的）。因此任何元素都能唯一地写成正规序组合，
+而“$Z$ 的幂次”成为可数的账本。主报告的证明本质上就是沿这本账本作归纳。
+\end{remark}
+
+\begin{proposition}[分次左理想的显式描述]\label{prop:graded}
+设 $I=AX^{p+1}+AY^{q+1}$。则 $I$ 是分次左理想，且
+\[
+I_d=A_{d-p-1}\,X^{p+1}+A_{d-q-1}\,Y^{q+1}\qquad(d\ge0),
+\]
+其中约定 $A_{e}=0$（$e<0$），且 $A_eX^{p+1}$ 指把每个 $X^aY^bZ^k\in A_e$ 右乘 $X^{p+1}$ 后
+按引理 \ref{lem:central} 正规序展开所得的集合。
+\end{proposition}
+
+\begin{proof}
+$I$ 由齐次元 $X^{p+1}$（次数 $p+1$）与 $Y^{q+1}$（次数 $q+1$）生成，故为分次左理想，
+$I_d=\sum_{e}A_e\cdot\{X^{p+1},Y^{q+1}\}_{d-e}$，即上式（左乘齐次元不改变“左理想”性）。
+\end{proof}
+
+\begin{corollary}[可计算性]
+$M_d:=A_d/I_d$ 是有限维 $\K$-向量空间，$\dim A_d=\#\{(a,b,k): a+b+2k=d\}$。
+于是“某元素是否属于 $I_d$”是一个\textbf{有限维线性方程组}问题，可在 $\Q$ 上精确求解
+（见第 \ref{sec:linear-algebra} 节）。
+\end{corollary}
+
+\section{交换子展开（$\ad$-Taylor 引理）}\label{sec:adtaylor}
+
+\begin{lemma}[Taylor 展开]\label{lem:taylor}
+设 $R$ 是结合代数，$x,y\in R$，$D=\ad_x$（即 $D(w)=xw-wx$）。则对 $n\ge1$，
+\[
+x^{n}y=\sum_{j=0}^{n}\binom{n}{j}\bigl(D^{j}y\bigr)x^{n-j}.
+\]
+\end{lemma}
+
+\begin{proof}
+对 $n$ 归纳。$n=1$ 即 $xy=yx+[x,y]$。设对 $n$ 成立，则
+\[
+x^{n+1}y=x\sum_{j}\binom{n}{j}(D^{j}y)x^{n-j}
+=\sum_{j}\binom{n}{j}\Bigl[(D^{j}y)x^{n-j+1}+(D^{j+1}y)x^{n-j}\Bigr],
+\]
+其中用了 $xw=wx+D(w)$。按 $x^{n+1-j'}$ 合并（$j'=j$ 与 $j'=j+1$），系数为
+$\binom{n}{j'}+\binom{n}{j'-1}=\binom{n+1}{j'}$。
+\end{proof}
+
+\begin{lemma}[中心交换子的情形]\label{lem:central}
+设 $z:=[x,y]$ 在 $R$ 中中心（即 $[z,x]=[z,y]=0$）。则 $D(z)=0$，且
+\[
+D^{j}(y^{m})=\frac{m!}{(m-j)!}\,y^{m-j}z^{j}\quad(0\le j\le m),\qquad D^{j}(y^m)=0\ (j>m).
+\]
+于是
+\[
+x^{n}y^{m}=\sum_{j=0}^{\min(n,m)}\binom{n}{j}\frac{m!}{(m-j)!}\,y^{m-j}z^{j}x^{n-j}.
+\]
+\end{lemma}
+
+\begin{proof}
+$D$ 是导子，故 $D(y^m)=m y^{m-1}D(y)=my^{m-1}z$；由 $D(z)=0$ 归纳即得公式。
+\end{proof}
+
+\begin{remark}[用途]
+引理 \ref{lem:central} 在 $n=p+1$ 时给出主报告的正规序公式
+$Y^BX^{p+1}=\sum_j(-1)^j\frac{B!}{(B-j)!}\binom{p+1}{j}X^{p+1-j}Y^{B-j}Z^j$，
+它是“沿直线的线性关系”的来源。取 $[x,y]=-Z$（即交换 $x,y$）时符号相应改变。
+\end{remark}
+
+\section{广义二项式定理（三项式公式）}\label{sec:trinomial}
+
+\begin{theorem}[三项式公式]\label{thm:tri}
+设 $[X,Y]=Z$ 中心。则对 $n\ge0$，
+\[
+(X+Y)^{n}=\sum_{\substack{a,b,k\ge0\\ a+b+2k=n}}\frac{n!}{a!\,b!\,k!}\Bigl(-\frac12\Bigr)^{k}X^{a}Y^{b}Z^{k}.
+\tag{$\star$}
+\]
+\end{theorem}
+
+\begin{proof}[证明一：初等归纳]
+关键在于单项式被 $(X+Y)$ 左乘的公式
+\[
+(X+Y)X^{a}Y^{b}Z^{k}=X^{a+1}Y^{b}Z^{k}+X^{a}Y^{b+1}Z^{k}-aX^{a-1}Y^{b}Z^{k+1},
+\]
+它等价于 $YX^{a}=X^{a}Y-aX^{a-1}Z$（即 $[X^a,Y]=aX^{a-1}Z$，$Z$ 中心）。
+设 $(\star)$ 对 $n$ 成立。固定 $A+B+2K=n+1$。$(X+Y)\cdot$ 右端中 $X^{A}Y^{B}Z^{K}$ 的系数来自
+\[
+\frac{n!}{(A-1)!B!K!}\Bigl(-\tfrac12\Bigr)^{K}
++\frac{n!}{A!(B-1)!K!}\Bigl(-\tfrac12\Bigr)^{K}
+-A\cdot\frac{n!}{A!B!(K-1)!}\Bigl(-\tfrac12\Bigr)^{K-1}
+=\frac{(n+1)!}{A!B!K!}\Bigl(-\tfrac12\Bigr)^{K},
+\]
+（越界项为 $0$；最后一步用 $A+B+2K=n+1$。）这正是 $(\star)$ 在 $n+1$ 时的系数，而 $n=0$ 时两端都是 $1$。
+\end{proof}
+
+\begin{proof}[证明二：形式 BCH]
+由 $[tX,tY]=t^2Z$ 中心，Campbell--Baker--Hausdorff 公式截断为
+$e^{tX}e^{tY}=e^{t(X+Y)+\frac{t^{2}}{2}Z}$，即 $e^{t(X+Y)}=e^{-\frac{t^{2}}{2}Z}e^{tX}e^{tY}$。
+比较 $t^{n}$ 的系数并乘以 $n!$ 即得 $(\star)$。（本条给出系数 $-\frac12$ 的来源：
+每出现一个 $Z$ 就付出因子 $\frac12$ 与一个负号。）
+\end{proof}
+
+\begin{corollary}[按 $Z$ 幂次分解]\label{cor:zdecomp}
+记 $B_m=\sum_{a+b=m}\frac{X^{a}Y^{b}}{a!b!}=[t^{m}]e^{tX}e^{tY}\in\K[X,Y]$（齐次，次数 $m$）。则
+\[
+(X+Y)^{n}=\sum_{k=0}^{\lfloor n/2\rfloor}\frac{(-1)^{k}n!}{2^{k}k!}\,Z^{k}B_{n-2k}.
+\]
+\end{corollary}
+
+\begin{remark}[指数 $2p+2q+1$ 的“量子修正”解读]
+在交换情形（$Z=0$）下，$(X+Y)^{N}\in(X^{p+1},Y^{q+1})$ 当且仅当 $N\ge p+q+1$。
+在非交换情形，$Z$ 的幂次把 $(X+Y)^N$ 的分量向“高 $Z$、低 $XY$ 次数”推移；
+而左理想 $I$ 只能吸收 $Z$ 的有限多个幂次，于是临界次数加倍：
+$N=2(p+q)+1$。主报告的定理给出严格证明，第 \ref{sec:linear-algebra} 节的精确计算表明它不能再改进。
+\end{remark}
+
+\section{左理想与双边理想：一个必须警惕的陷阱}\label{sec:onesided}
+
+\begin{remark}[单侧性是本质困难]
+$I=AX^{p+1}+AY^{q+1}$ 是\textbf{左}理想：若 $e\in I$ 则 $ae\in I$，但\textbf{一般} $ea\notin I$。
+于是 $X^{p+1}v=0$（向量级假设）\textbf{不能}当作 $X^{p+1}=0$（元素级假设）来用。
+\end{remark}
+
+\begin{example}[$X^{2}Y\notin I$，$p=q=1$]
+在 $A$ 的 PBW 基下
+$I_3=A_1X^{2}+A_1Y^{2}=\operatorname{span}\{X^{3},\;X^{2}Y-2XZ,\;XY^{2},\;Y^{3}\}$
+（因为 $YX^{2}=X^{2}Y-2XZ$）。而 $A_3$ 以
+$\{X^{3},X^{2}Y,XY^{2},Y^{3},XZ,YZ\}$ 为基，$X^{2}Y=(X^{2}Y-2XZ)+2XZ$，
+其中 $XZ$ 不在上述子空间内，故 $X^{2}Y\notin I$。但 $X^{2}Y$ 显然属于双边理想
+$AX^{2}A+AY^{2}A$。
+\end{example}
+
+\begin{proposition}[双边版本成立，但不足]
+设 $R$ 特征零，$x,y\in R$，$z=[x,y]$ 中心，$x^{p+1}=y^{q+1}=0$（元素等式）。则
+$(x+y)^{2p+2q+1}=0$。
+\end{proposition}
+
+\begin{proof}
+由 $x^{p+1}=0$ 与引理 \ref{lem:central}，对 $m\ge1$ 有
+$0=x^{p+1}y^{m}=\sum_{j=1}^{\min(p+1,m)}\binom{p+1}{j}\frac{m!}{(m-j)!}y^{m-j}z^{j}x^{p+1-j}$。
+对 $J=1,\dots,p+1$ 取 $m=J$ 作降 $J$ 归纳（$j<J$ 项由归纳假设为零），得 $z^{J}x^{p+1-J}=0$；
+同理 $z^{J}y^{q+1-J}=0$。于是 $a\le p$、$k+a\ge p+1$ 时
+$z^{k}x^{a}=z^{k-(p+1-a)}(z^{p+1-a}x^{a})=0$。代入定理 \ref{thm:tri}：$a\ge p+1$ 或 $b\ge q+1$
+的项为零；其余项若 $k+a\ge p+1$ 则为零，否则 $k+b=N-a-k\ge N-p=p+2q+1\ge q+1$ 亦为零。
+\end{proof}
+
+\begin{remark}[与主定理的关系]
+双边版本给出的是 $(X+Y)^{N}$ 属于更大的双边理想
+$AX^{p+1}A+AY^{q+1}A$，\textbf{推不出} $(X+Y)^{N}\in I$（由上面的例子可见差别是实质的）。
+主报告改用只允许左乘的“直线关系”（第 \ref{sec:line} 节），这是全部技术困难的所在。
+\end{remark}
+
+\section{沿直线的线性方程组}\label{sec:line}
+
+\noindent\textbf{设置。}固定 $p,q$、$N=2p+2q+1$ 与 $\delta\in\Z$。令
+\[
+M=\frac{N-\delta}{2},\qquad P_b=X^{b+\delta}Y^{b}Z^{M-b}\qquad(b\in\Z),
+\]
+$u_b:=$ $P_b$ 在 $M=A/I$ 中的类（无意义的 $b$ 约定 $u_b=0$）。
+
+\begin{lemma}[直线方程]\label{lem:line-eq}
+对 $b\in[b_0,M]$，$b_0=\max(p+1-\delta,0)$，有
+\[
+\sum_{j=0}^{p+1}(-1)^{j}c_{b,j}\,u_{b-j}=0,\qquad c_{b,j}=\frac{b!}{(b-j)!}\binom{p+1}{j},
+\]
+其中 $j>b$ 时 $c_{b,j}=0$。
+\end{lemma}
+
+\begin{proof}
+由引理 \ref{lem:central}（取 $n=p+1$，$B=b$）与 $Z$ 的中心性，
+$(X^{b+\delta-p-1}Y^{b}Z^{M-b})X^{p+1}=\sum_j(-1)^jc_{b,j}X^{b+\delta-j}Y^{b-j}Z^{M-b+j}$，
+右端第 $j$ 项正是 $P_{b-j}$；左端属于 $I$。
+\end{proof}
+
+\begin{lemma}[平凡消失]\label{lem:triv2}
+若 $b\ge q+1$，则 $u_b=0$。
+\end{lemma}
+
+\begin{proof}
+$X^{A}Y^{B}Z^{K}=Z^{K}X^{A}Y^{B-q-1}Y^{q+1}\in AY^{q+1}\subseteq I$（$B\ge q+1$）。
+\end{proof}
+
+\noindent\textbf{两个线性代数收尾。}
+\begin{enumerate}[label=(\roman*)]
+\item \textbf{三角形子式。}若 $\delta\ge p+1$（则 $b_0=0$），取未知量 $u_0,\dots,u_D$（$D=\min(M,q)$）与方程
+$b=0,\dots,D$，系数矩阵 $W_{b,c}=(-1)^{b-c}c_{b,b-c}=(-1)^{b-c}\frac{b!}{c!}\binom{p+1}{b-c}$ 是下三角且对角元为 $1$，
+故可逆。若 $\delta\le-1$，把指标平移 $i=b-(p+1+|\delta|)$、$j=c-|\delta|$ 后矩阵为上三角，
+对角元 $(-1)^{p+1}b!/c!\ne0$，故可逆。两种情形都推出 $u_b=0$ 对一切 $b$。
+\item \textbf{少项式论证。}若 $1\le\delta\le p$，令 $U(t)=\sum_b u_bt^{b}/b!$、$H(t)=(1-t)^{p+1}U(t)$。
+直接计算表明 $H$ 的 $t^{b}$ 系数为 $r_b/b!$，其中 $r_b$ 是 (i) 中方程的左端。于是 $H$ 的非零系数只可能位于
+$[0,b_0-1]\cup[M+1,D+p+1]$，个数 $\kappa\le p+1$；但 $H$ 在 $t=1$ 处有重数 $\ge p+1$ 的根。
+若 $H\ne0$，取线性泛函 $\lambda$ 使 $\lambda\circ H\ne0$，则由第 \ref{sec:fewnomial} 节引理得
+$p+1\le\kappa-1\le p$，矛盾；故 $H=U=0$，即所有 $u_b=0$。
+\end{enumerate}
+
+\section{少项式重数界（Descartes 型）}\label{sec:fewnomial}
+
+\begin{lemma}[重数界]\label{lem:fewnomial2}
+设 $\K$ 特征为零，$f\in\K[t]$ 非零且恰有 $k$ 个非零系数。则对任意 $c\in\K^{\times}$，
+$c$ 作为 $f$ 的根的重数不超过 $k-1$。
+\end{lemma}
+
+\begin{proof}
+用伸缩 $t\mapsto t/c$（$c\ne0$）可把 $c$ 化为 $1$，且不改变非零系数的个数与根的重数。
+于是设 $f=\sum_{i=1}^{k}a_it^{e_i}$，$e_1<\cdots<e_k$。
+若 $f$ 在 $t=1$ 的重数 $\ge k$，则 $f^{(j)}(1)=0$（$j=0,\dots,k-1$），即
+$\sum_i a_i\,(e_i)_j=0$，其中 $(e)_j=e(e-1)\cdots(e-j+1)$ 是首一 $j$ 次多项式。
+矩阵 $\bigl((e_i)_j\bigr)_{j,i}$（$k\times k$）的第 $j$ 行是首一 $j$ 次多项式在 $e=e_i$ 处的取值，
+故它等于 Vandermonde 矩阵 $\bigl(e_i^{\,j}\bigr)$ 的左乘一个单位上三角矩阵（把 $e^j$ 换成 $(e)_j$），
+行列式 $\prod_{i<i'}(e_{i'}-e_i)\ne0$。于是 $a_i=0$，与 $f\ne0$ 矛盾。
+\end{proof}
+
+\begin{remark}[取等例子与失效边界]
+$(t-c)^{k-1}$ 恰有 $k$ 个非零系数且重数为 $k-1$，故界是精确的。
+本引理在正特征下失效（$t^{p}-t$ 之类），因此主定理的证明必须假定 $\chr\K=0$——
+与 Conjecture A.1 的假设一致。
+\end{remark}
+
+\section{精确有理数线性代数核验}\label{sec:linear-algebra}
+
+\subsection{算法}
+对每个次数 $d$：枚举 $A_d$ 的基 $\{(a,b,k):a+b+2k=d\}$；按引理 \ref{lem:central}（$n=p+1$）
+与 $A_{d-q-1}Y^{q+1}=\{X^aY^{b+q+1}Z^k\}$ 生成 $I_d$ 的生成元；
+以 $\Q$ 上的 Gauss 消元（\texttt{Fraction} 精确算术）求 $A_d/I_d$ 的坐标；
+最后逐步计算 $v_{n+1}=\mathrm{reduce}((X+Y)v_n)$，$v_0=1$。
+判据：$v_n=0$ 当且仅当 $(X+Y)^n\in I$。
+
+\subsection{输出}
+\begin{itemize}[leftmargin=2em]
+\item 最小幂零指数：对 $0\le p,q\le6$（49 组）恒有
+$\min\{n:(X+Y)^nv_0=0\}=2p+2q+1$，与主定理一致且说明指数不可改进。
+\item $Z$ 的幂零指数：恒为 $p+q+1$。
+\item Hilbert 函数 $\dim M_d$（例如 $(p,q)=(4,4)$ 时为
+$1,2,4,6,9,10,12,12,13,12,12,10,9,6,4,2,1,0,\dots$），最高非零次数 $=2p+2q$。
+\item 逐项核验：三项式公式（$n\le8$）、正规序公式（$p,B\le5$）、直线关系
+（$p\le3$，$p+1\le A\le p+4$，$B\le4$，$K\le2$）、三角形子式的列满秩性（$p,q\le4$）、
+少项式计数条件（$p,q\le5$）、以及“$Z^kB_m\in I\iff 2k+m\ge2p+2q+1$”（$p,q\le4$）。
+\end{itemize}
+
+\subsection{地位}
+上述计算是\textbf{独立检验}，用于发现符号、指标与系数的书写错误；
+它\textbf{不构成证明}。主报告中的定理对一切 $p,q$ 有纯符号证明。
+
+\section{符号表}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+符号 & 含义\\
+\midrule
+$[X,Y]=XY-YX$ & 交换子（与 $YX=XY-[X,Y]$ 等价）\\
+$A=U(\hh_1)$ & Heisenberg 代数，基 $X^aY^bZ^k$\\
+$A_d$ & 次数 $d$ 的齐次分量（$\deg X=\deg Y=1,\ \deg Z=2$）\\
+$I=AX^{p+1}+AY^{q+1}$ & 分次\textbf{左}理想\\
+$M=A/I$, $v_0=1+I$ & 万能模与万能向量\\
+$N=2p+2q+1$ & 临界次数\\
+$\delta=A-B$, $M=(N-\delta)/2$ & 直线参数\\
+$P_b=X^{b+\delta}Y^bZ^{M-b}$, $u_b=[P_b]$ & 直线上的单项式与其类\\
+$c_{b,j}=\frac{b!}{(b-j)!}\binom{p+1}{j}$ & 直线方程系数\\
+$B_m=\sum_{a+b=m}\frac{X^aY^b}{a!b!}$ & $Z$ 分解中的齐次分量\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{thebibliography}{9}
+\bibitem{LWZZ} S.-Q. Liu, C.-Z. Wu, Y. Zhang, X. Zhou,
+\emph{Drinfeld--Sokolov hierarchies and diagram automorphisms of affine Kac--Moody algebras},
+Comm. Math. Phys. \textbf{375} (2020), 785--832.
+DOI: \href{https://doi.org/10.1007/s00220-019-03568-4}{10.1007/s00220-019-03568-4}.
+\bibitem{KacBook} V. G. Kac, \emph{Infinite-Dimensional Lie Algebras}, 3rd ed.,
+Cambridge University Press, Cambridge, 1990.
+\bibitem{FSS} J. Fuchs, B. Schellekens, C. Schweigert,
+\emph{From Dynkin diagram symmetries to fixed point structures},
+Comm. Math. Phys. \textbf{180} (1996), 39--97.
+\bibitem{Kac68} V. G. Kac, \emph{Simple irreducible graded Lie algebras of finite growth},
+Math. USSR Izv. \textbf{2} (1968), 1271--1311.
+\bibitem{Dixmier} J. Dixmier, \emph{Enveloping Algebras}, North-Holland Mathematical Library 14,
+North-Holland, Amsterdam, 1977.
+\bibitem{PolyaSzego} G. P\'olya, G. Szeg\H{o}, \emph{Problems and Theorems in Analysis II},
+Springer, Berlin, 1976.
+\bibitem{Block} R. E. Block, \emph{The irreducible representations of the Weyl algebra $A_1$},
+Lecture Notes in Math. \textbf{740}, Springer, Berlin, 1979, 69--79.
+\bibitem{Bourbaki} N. Bourbaki, \emph{Lie Groups and Lie Algebras, Chapters 4--6},
+Springer, Berlin, 2002.
+\bibitem{DS} V. G. Drinfeld, V. V. Sokolov,
+\emph{Lie algebras and equations of Korteweg--de Vries type},
+J. Math. Sci. \textbf{30} (1985), 1975--2036.
+\end{thebibliography}
+
+\end{document}

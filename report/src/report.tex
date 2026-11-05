@@ -1,0 +1,914 @@
+% !TEX program = xelatex
+\documentclass[11pt,UTF8]{ctexart}
+
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathrsfs}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{array}
+
+\setlist{itemsep=2pt,topsep=3pt}
+\linespread{1.15}
+
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{proposition}[theorem]{命题}
+\newtheorem{corollary}[theorem]{推论}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{定义}
+\newtheorem{conjecture}[theorem]{猜想}
+\newtheorem{remark}[theorem]{注}
+\newtheorem{example}[theorem]{例}
+
+\newcommand{\ad}{\operatorname{ad}}
+\newcommand{\End}{\operatorname{End}}
+\newcommand{\chr}{\operatorname{char}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\g}{\mathfrak{g}}
+\newcommand{\hh}{\mathfrak{h}}
+\newcommand{\sbar}{\bar\sigma}
+
+\title{\bfseries 关于 Liu--Wu--Zhang--Zhou 附录 A 中 Conjecture A.1 的一个证明\\
+\large ——兼论 Heisenberg 代数中的广义二项式定理与一条少项式重数引理}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+本文研究 Liu--Wu--Zhang--Zhou 在 \emph{Comm. Math. Phys.} \textbf{375} (2020) 785--832 附录 A 中提出的
+Conjecture A.1，并给出该猜想的\textbf{完整证明}。设 $V$ 是特征零域 $\K$ 上的向量空间，
+$X,Y,Z\in\End(V)$ 满足 $Z=[X,Y]$ 且 $Z$ 与 $X,Y$ 交换（约定 $[X,Y]=XY-YX$）；若
+$v\in V$ 与 $p,q\in\N$ 满足 $X^{p+1}v=Y^{q+1}v=0$，则
+\[
+(X+Y)^{2p+2q+1}\,v=0 .
+\]
+原文只证明了 $p=0$ 或 $q=0$ 以及 $p=q=1$ 的情形。我们的证明分三步：
+(i) 把猜想等价地翻译成 Heisenberg 代数 $A=U(\hh_1)=\K\langle X,Y,Z\rangle/([X,Y]=Z,\ Z\ \text{中心})$
+中左理想 $I=AX^{p+1}+AY^{q+1}$ 的\textbf{成员问题} $(X+Y)^{2p+2q+1}\in I$；
+(ii) 用\textbf{广义二项式定理}（三项式公式）把 $(X+Y)^n$ 按其 $Z$ 幂次分解，说明指数
+$2p+2q+1$ 的自然性与最优性；
+(iii) 沿每条“$a-b=\delta$ 直线”把问题化为一族一阶线性方程组，再用两个初等的
+线性代数论断（一个三角形子式、一条少项式重数引理）证明所有解为零。
+作为副产品我们得到：$A$ 的每个次数 $\ge 2p+2q+1$ 的单项式都落在 $I$ 中，
+即商模 $A/I$ 是有限维的。原文的引理 A.3、A.4 是我们的定理的特例。
+文中所用的全部技巧汇总为技术文档，作为附录 A（附注）给出；所有中间结论都经过
+精确有理数算术的计算机核验，但\textbf{数值核验不作为证明}。
+
+\medskip
+\noindent\textbf{关键词：} Heisenberg 代数；左理想；广义二项式定理；Kac--Moody 代数；
+Serre 关系；图谱自同构；少项式重数界。
+\end{abstract}
+
+\tableofcontents
+
+\section{引言：问题、来源与约定}\label{sec:intro}
+
+\subsection{问题的出处}
+
+Liu、Wu、Zhang、Zhou 在文~[1] 中研究仿射 Kac--Moody 代数 $\g$ 的图谱自同构 $\sbar$ 所诱导的
+Drinfeld--Sokolov 梯子，并证明“折叠”后的梯子可以化为原梯子的不变子梯子。文~[1] 附录 A
+的目标是验证折叠后代数 $\bar\g$ 的 Chevalley 生成元 $\{E_i,F_i,H_i\}$ 满足折叠 Cartan 矩阵
+$(A_{ij})$ 对应的 Serre 关系。当某个轨道满足 $b_i=2$ 时，Serre 关系
+$\ad_{E_i}^{1-A_{ij}}E_j=0$ 化归为一个纯代数命题，即文~[1] 的 Conjecture A.1。
+
+\begin{conjecture}[{Conjecture A.1 of [1]}]\label{conj:main}
+设 $\K$ 是特征零的域，$V$ 是 $\K$-向量空间，$X,Y,Z\in\End(V)$ 满足
+\begin{equation}\label{eq:hyp}
+Z=[X,Y]:=XY-YX,\qquad [X,Z]=[Y,Z]=0 .
+\end{equation}
+若 $v\in V$ 与 $p,q\in\N$ 满足
+\begin{equation}\label{eq:nilp}
+X^{p+1}(v)=0,\qquad Y^{q+1}(v)=0 ,
+\end{equation}
+则
+\begin{equation}\label{eq:concl}
+(X+Y)^{2p+2q+1}(v)=0 .
+\end{equation}
+\end{conjecture}
+
+\begin{remark}[关于交换子约定]\label{rem:conv}
+本文与文~[1] 一律采用
+\[
+[X,Y]=XY-YX,\qquad\text{等价地}\qquad YX=XY-[X,Y].
+\]
+（注意 $YX=[X,Y]-XY$ 与 $YX=XY-[X,Y]$ 相差一个符号；若把 $Z$ 换成 $-Z$、$Y$ 换成 $-Y$，
+两种约定互相等价，而本文的全部结论都只依赖于“$Z$ 与 $X,Y$ 交换、且 $Z=XY-YX$”这一结构，
+与 $Z$ 的整体符号无关。）在此约定下 $[X^n,Y]=nX^{n-1}Z$，这正是文~[1] 引理 A.3 所用的恒等式。
+\end{remark}
+
+\subsection{本文的主要结果}
+
+\begin{theorem}[本文主结论]\label{thm:main-intro}
+设 $\K$ 特征为零。则对任意 $p,q\ge 0$，Conjecture A.1 成立，即 \eqref{eq:hyp}、\eqref{eq:nilp}
+蕴含 \eqref{eq:concl}。
+\end{theorem}
+
+证明见第~\ref{sec:proof} 节（定理~\ref{thm:main}）。证明的主要结构如下。
+
+\begin{enumerate}[label=(\roman*)]
+\item \textbf{化归}（第 \ref{sec:reduce} 节）：取 Heisenberg 代数
+$A=U(\hh_1)=\K\langle X,Y,Z\rangle/([X,Y]=Z,\ Z\ \text{中心})$ 与左理想
+$I=AX^{p+1}+AY^{q+1}$。以 $A$ 的 PBW 基 $\{X^aY^bZ^k\}$ 记 $A=\bigoplus_d A_d$。
+则 \eqref{eq:concl} 对一切 $(V,v)$ 成立，当且仅当
+\begin{equation}\label{eq:membership}
+(X+Y)^{2p+2q+1}\in I .
+\end{equation}
+\item \textbf{广义二项式定理}（第 \ref{sec:binom} 节）：在 $A$ 中有精确恒等式
+\begin{equation}\label{eq:trinomial}
+(X+Y)^{n}=\sum_{a+b+2k=n}\frac{n!}{a!\,b!\,k!}\Bigl(-\tfrac12\Bigr)^{k}X^{a}Y^{b}Z^{k}.
+\end{equation}
+它把 $(X+Y)^n$ 分解成 $Z$ 幂次互不相同的分量，是理解指数 $2p+2q+1$ 的出发点。
+\item \textbf{左理想中的基本关系}（第 \ref{sec:relations} 节）：由 $(X^{A-p-1}Y^BZ^K)X^{p+1}\in I$
+得到一族“沿直线”的线性关系；由 $Y^{q+1}\in I$ 得到“$Y$ 幂次 $\ge q+1$ 的单项式都属于 $I$”。
+\item \textbf{主证明}（第 \ref{sec:proof} 节）：把次数为 $N=2p+2q+1$ 的单项式按
+$\delta=a-b$ 分成若干“直线”，沿每条直线把关系排成一个线性方程组，
+用两个初等引理（三角形子式、少项式重数界）证明解为零。
+\item \textbf{最优性}（第 \ref{sec:sharp} 节）：指数 $2p+2q+1$ 不能改进；这由精确计算给出，
+见第 \ref{sec:numerics} 节。
+\end{enumerate}
+
+\subsection{与文献的关系，以及检索说明}
+
+我们检索了 MathOverflow、Math.StackExchange 以及相关文献，\textbf{没有找到对 Conjecture A.1
+的直接处理}；与本题最接近的是一般性的工具：Poincaré--Birkhoff--Witt 定理（见 [5]）；
+仿射 Kac--Moody 代数与折叠 Cartan 矩阵的背景（见 [2,3,4]）；Weyl 代数有限维模的经典结论（见 [7]）；
+以及 Descartes 符号法则与少项式根数界（见 [6]）。本文的贡献在于给出一个自足的证明，
+并把所用技巧系统化（附录 A）。
+
+\section{化归：万能模与左理想的成员问题}\label{sec:reduce}
+
+\subsection{Heisenberg 代数及其分次}
+
+\begin{definition}\label{def:A}
+设 $\K$ 特征为零，$\hh_1=\K X\oplus\K Y\oplus\K Z$ 是三维 Heisenberg 代数：
+$[X,Y]=Z$，$[Z,\hh_1]=0$。记 $A=U(\hh_1)$，即由 $X,Y,Z$ 生成、满足关系
+\[
+XY-YX=Z,\qquad ZX=XZ,\qquad ZY=YZ
+\]
+的结合代数。由 PBW 定理 [5]，单项式
+\[
+X^{a}Y^{b}Z^{k}\qquad(a,b,k\ge 0)
+\]
+构成 $A$ 的 $\K$-基；称 $X^aY^bZ^k$ 为\textbf{正规序}（normal ordered）单项式。
+赋次数 $\deg X=\deg Y=1$、$\deg Z=2$，则 $A=\bigoplus_{d\ge0}A_d$ 是分次代数，
+$A_d$ 以 $\{X^aY^bZ^k: a+b+2k=d\}$ 为基。
+\end{definition}
+
+由于 $Z$ 是中心的，$A$ 有对合（反自同构）$\omega$：$X\mapsto X$，$Y\mapsto -Y$，$Z\mapsto -Z$；
+它在后文只起说明作用。
+
+\subsection{万能模}
+
+\begin{definition}\label{def:I}
+固定 $p,q\ge0$，记
+\[
+I:=I_{p,q}:=A\,X^{p+1}+A\,Y^{q+1}\ \subseteq A ,
+\]
+它是 $A$ 的\textbf{左}理想（不是双边理想，见注 \ref{rem:two-sided}），且由齐次元生成，故是分次左理想：
+$I=\bigoplus_d I_d$，$I_d=I\cap A_d$。记
+\[
+M:=M_{p,q}:=A/I,\qquad v_0:=1+I\in M .
+\]
+\end{definition}
+
+\begin{proposition}[化归]\label{prop:reduce}
+固定 $p,q$。以下三条等价：
+\begin{enumerate}[label=(\alph*)]
+\item \eqref{eq:concl} 对一切满足 \eqref{eq:hyp}、\eqref{eq:nilp} 的三元组 $(V,v)$ 成立；
+\item 在 $M=A/I$ 中有 $(X+Y)^{2p+2q+1}v_0=0$；
+\item $(X+Y)^{2p+2q+1}\in I$。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(c)$\Rightarrow$(a)：设 $\varphi:A\to\End(V)$ 是由 $X\mapsto X$、$Y\mapsto Y$、$Z\mapsto Z$ 给出的
+代数同态；\eqref{eq:hyp} 保证它良定义。由 (c) 可写
+$(X+Y)^{2p+2q+1}=\sum_i a_iX^{p+1}+\sum_j b_jY^{q+1}$（$a_i,b_j\in A$）。作用到 $v$ 上并用
+\eqref{eq:nilp} 即得 \eqref{eq:concl}。
+
+(a)$\Rightarrow$(b)：取 $(V,v)=(M,v_0)$。由 $X^{p+1}\in I$、$Y^{q+1}\in I$ 得
+$X^{p+1}v_0=Y^{q+1}v_0=0$，故 \eqref{eq:concl} 给出 $(X+Y)^{2p+2q+1}v_0=0$。
+
+(b)$\Leftrightarrow$(c)：$(X+Y)^{2p+2q+1}v_0=0$ 按定义就是 $(X+Y)^{2p+2q+1}\in I$。
+\end{proof}
+
+\begin{proposition}[只需最低次数]\label{prop:degree}
+记 $N_0:=2p+2q+1$。若 $A_{N_0}\subseteq I$，则对一切 $n\ge N_0$ 有 $A_n\subseteq I$。
+\end{proposition}
+
+\begin{proof}
+先证 $A_{n+1}=X A_n+Y A_n$。设 $X^{A}Y^{B}Z^{K}\in A_{n+1}$（次数 $n+1\ge1$）。
+若 $A\ge1$，它等于 $X\cdot(X^{A-1}Y^BZ^K)$，而后者次数为 $n$；
+若 $A=0$ 且 $B\ge1$，它等于 $Y\cdot(Y^{B-1}Z^K)$，后者次数为 $n$；
+若 $A=B=0$，则它是 $Z^{K}$ 且 $2K=n+1\ge1$，此时
+\[
+Z^{K}=Z\cdot Z^{K-1}=(XY-YX)Z^{K-1}=X\cdot\bigl(YZ^{K-1}\bigr)-Y\cdot\bigl(XZ^{K-1}\bigr),
+\]
+右端两个因子次数都是 $2K-1=n$。
+于是 $A_{n+1}\subseteq XA_n+YA_n$（另一方向的包含是显然的）。
+而 $I$ 是左理想，故 $XI+YI\subseteq I$。于是 $A_n\subseteq I$ 蕴含 $A_{n+1}\subseteq I$。归纳即得。
+\end{proof}
+
+\begin{corollary}\label{cor:reduce}
+Conjecture A.1 等价于下列命题：对一切 $p,q\ge0$，
+\[
+\text{每个次数}\ \ge 2p+2q+1\ \text{的单项式}\ X^{A}Y^{B}Z^{K}\ \text{都属于}\ I=AX^{p+1}+AY^{q+1}.
+\]
+\end{corollary}
+
+\section{广义二项式定理（三项式公式）}\label{sec:binom}
+
+原文的出发点（引理 A.3）是 Baker--Campbell--Hausdorff 公式。我们把它精确化为一条
+\textbf{广义二项式定理}：由于 $[X,Y]=Z$ 是中心的，二项式系数被“三分配”为一个三项和。
+这既是本文证明的技术基础之一，也解释了指数 $2p+2q+1$ 的来源。
+
+\begin{theorem}[广义二项式定理]\label{thm:trinomial}
+在 $A$ 中，对任意 $n\ge0$，
+\begin{equation}\label{eq:tri}
+(X+Y)^{n}=\sum_{\substack{a,b,k\ge0\\ a+b+2k=n}}\frac{n!}{a!\,b!\,k!}\Bigl(-\frac12\Bigr)^{k}X^{a}Y^{b}Z^{k}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}[证明一（初等归纳）]
+把 \eqref{eq:tri} 的右端记为 $F_n$。先注意基本乘积公式
+\begin{equation}\label{eq:step}
+(X+Y)\,X^{a}Y^{b}Z^{k}=X^{a+1}Y^{b}Z^{k}+X^{a}Y^{b+1}Z^{k}-a\,X^{a-1}Y^{b}Z^{k+1},
+\end{equation}
+它来自 $YX^{a}=X^{a}Y-aX^{a-1}Z$（即 $[X^a,Y]=aX^{a-1}Z$）。
+对 $n$ 归纳：设 \eqref{eq:tri} 对 $n$ 成立，用 \eqref{eq:step} 把 $(X+Y)F_n$ 中的每一项改写。
+固定满足 $A+B+2K=n+1$ 的三元组 $(A,B,K)$，它在 $(X+Y)F_n$ 中的系数来自三处：
+\[
+\underbrace{\frac{n!}{(A-1)!B!K!}\Bigl(-\tfrac12\Bigr)^{K}}_{(a,b,k)=(A-1,B,K)},\qquad
+\underbrace{\frac{n!}{A!(B-1)!K!}\Bigl(-\tfrac12\Bigr)^{K}}_{(a,b,k)=(A,B-1,K)},\qquad
+\underbrace{-\!A\cdot\frac{n!}{A!B!(K-1)!}\Bigl(-\tfrac12\Bigr)^{K-1}}_{(a,b,k)=(A+1,B,K-1)},
+\]
+（下标越界者视为 $0$）。三项之和为
+\[
+\frac{n!}{A!B!K!}\Bigl(-\tfrac12\Bigr)^{K}\bigl(A+B+2K\bigr)
+=\frac{n!\,(n+1)}{A!B!K!}\Bigl(-\tfrac12\Bigr)^{K}
+=\frac{(n+1)!}{A!B!K!}\Bigl(-\tfrac12\Bigr)^{K},
+\]
+恰是 $F_{n+1}$ 中 $X^AY^BZ^K$ 的系数。又 $F_0=1$，故 \eqref{eq:tri} 对一切 $n$ 成立。
+\end{proof}
+
+\begin{proof}[证明二（BCH，形式的）]
+在形式幂级数环 $A[\![t]\!]$ 中，由 $[tX,tY]=t^2Z$ 与 $Z$ 中心可得
+$e^{tX}e^{tY}=e^{t(X+Y)+\frac{t^2}{2}Z}$（Campbell--Baker--Hausdorff 公式在此截断，
+因为 $[tX,[tX,tY]]=[tY,[tX,tY]]=0$）。于是
+\[
+e^{t(X+Y)}=e^{-\frac{t^2}{2}Z}e^{tX}e^{tY}
+=\sum_{a,b,k\ge0}\frac{(-1)^k\,t^{a+b+2k}}{2^{k}k!\,a!\,b!}X^{a}Y^{b}Z^{k}.
+\]
+比较 $t^n$ 的系数并乘以 $n!$ 即得 \eqref{eq:tri}。（该推导只是启发性说明；
+证明一已给出严格的归纳证明。）
+\end{proof}
+
+\begin{corollary}[按 $Z$ 幂次的分解]\label{cor:Zdecomp}
+对 $n\ge0$，
+\begin{equation}\label{eq:Zdecomp}
+(X+Y)^{n}=\sum_{k=0}^{\lfloor n/2\rfloor}\frac{(-1)^{k}\,n!}{2^{k}\,k!}\;Z^{k}\,B_{n-2k},
+\qquad
+B_{m}:=\sum_{a+b=m}\frac{X^{a}Y^{b}}{a!\,b!}=[t^{m}]\,e^{tX}e^{tY}.
+\end{equation}
+特别地，$B_m\in\K[X,Y]$ 是 $X,Y$ 的（非交换）齐次“除幂”多项式，$\deg B_m=m$。
+\end{corollary}
+
+\begin{remark}[指数 $2p+2q+1$ 的自然性]\label{rem:why}
+由 \eqref{eq:Zdecomp}，$(X+Y)^{N}$ 的每个分量形如 $Z^k f(X,Y)$，其中
+$\deg f+2k=N$。另一方面（见第 \ref{sec:relations} 节引理 \ref{lem:line}），
+左理想 $I$ 的“沿直线”关系使得 $Z^{k}f$ 的“典型致死条件”大致是
+$\deg f+2k\gtrsim 2(p+q)$。两相比较，$N=2p+2q+1$ 正是临界值：
+它等于古典（交换）临界值 $p+q+1$ 加上一个量子修正 $p+q$。第 \ref{sec:sharp} 节说明
+该值确实不能再小。
+\end{remark}
+
+\begin{remark}
+原文引理 A.3 的“$Z^kX^l(v)$ 当 $2k+l>2p$ 时为零”这一断言仅用到了 $Yv=0$（即 $q=0$）；
+在一般情况下它\textbf{不成立}：例如 $p=q=1$ 时 $ZX\notin I$（见第 \ref{sec:numerics} 节表 \ref{tab:mono}）。
+这正是为什么一般情形需要新想法。
+\end{remark}
+
+\section{左理想中的基本关系}\label{sec:relations}
+
+本节给出三个初等引理，它们把“理想成员”问题化为“沿直线的线性方程组”。
+
+\begin{lemma}[正规序公式]\label{lem:normal}
+在 $A$ 中，对一切 $B,n\ge0$，
+\begin{equation}\label{eq:normal}
+Y^{B}X^{n}=\sum_{j=0}^{\min(B,n)}(-1)^{j}\,\frac{B!}{(B-j)!}\binom{n}{j}\,X^{n-j}Y^{B-j}Z^{j}.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+对 $B$ 归纳。$B=0$ 平凡。由 $[X^n,Y]=nX^{n-1}Z$（对 $n$ 归纳可得）有
+$YX^{n}=X^{n}Y-nX^{n-1}Z$，这正是 $B=1$ 的 \eqref{eq:normal}。
+设 \eqref{eq:normal} 对 $B$ 成立，则
+\[
+Y^{B+1}X^{n}=Y\sum_{j=0}^{\min(B,n)}(-1)^{j}\tfrac{B!}{(B-j)!}\tbinom{n}{j}X^{n-j}Y^{B-j}Z^{j}
+=\sum_{j}(-1)^{j}\tfrac{B!}{(B-j)!}\tbinom{n}{j}
+\Bigl(X^{n-j}Y^{B+1-j}Z^{j}-(n-j)X^{n-j-1}Y^{B-j}Z^{j+1}\Bigr).
+\]
+固定 $j$ 与三元组 $(n-j,\,B+1-j,\,j)$，其系数为
+\[
+(-1)^{j}\tfrac{B!}{(B-j)!}\tbinom{n}{j}+(-1)^{j-1}\tfrac{B!}{(B+1-j)!}\tbinom{n}{j-1}\bigl(n-j+1\bigr)
+=(-1)^{j}\tfrac{B!}{(B+1-j)!}\Bigl[(B+1-j)\tbinom{n}{j}+(n-j+1)\tbinom{n}{j-1}\Bigr].
+\]
+方括号内 $=(B+1)\tbinom{n}{j}$（直接通分：$\frac{B+1-j}{j!}+\frac{1}{(j-1)!}=\frac{B+1}{j!}$ 乘以
+$\frac{n!}{(n-j)!}$），故系数为
+$(-1)^{j}\frac{(B+1)!}{(B+1-j)!}\binom{n}{j}$，即 \eqref{eq:normal} 中 $B+1$ 的情形的系数。
+归纳完成。
+\end{proof}
+
+\begin{lemma}[直线关系]\label{lem:line}
+设 $p\ge0$。对一切 $A\ge p+1$、$B\ge0$、$K\ge0$，元素
+\begin{equation}\label{eq:line}
+R(A,B,K):=\sum_{j=0}^{\min(B,p+1)}(-1)^{j}\,\frac{B!}{(B-j)!}\binom{p+1}{j}\,X^{A-j}Y^{B-j}Z^{K+j}
+\end{equation}
+属于 $I=AX^{p+1}+AY^{q+1}$；事实上
+\begin{equation}\label{eq:line-exact}
+R(A,B,K)=\bigl(X^{A-p-1}Y^{B}Z^{K}\bigr)\,X^{p+1}.
+\end{equation}
+在特征零的域中 \eqref{eq:line} 的所有系数 $\dfrac{B!}{(B-j)!}\dbinom{p+1}{j}$（$0\le j\le\min(B,p+1)$）都非零。
+\end{lemma}
+
+\begin{proof}
+把 \eqref{eq:normal} 取 $n=p+1$ 得
+$Y^{B}X^{p+1}=\sum_{j}(-1)^{j}\frac{B!}{(B-j)!}\binom{p+1}{j}X^{p+1-j}Y^{B-j}Z^{j}$；
+在左端左乘 $X^{A-p-1}Z^{K}$，并利用 $Z$ 中心（可自由搬运）即得 \eqref{eq:line-exact}。
+系数非零是因为 $\chr\K=0$：$\frac{B!}{(B-j)!}=\prod_{i=0}^{j-1}(B-i)$ 与 $\binom{p+1}{j}$
+都是正整数（$0<j\le\min(B,p+1)$），在特征零的域中非零。
+\end{proof}
+
+\begin{lemma}[平凡的消失]\label{lem:triv}
+若 $B\ge q+1$，则对一切 $A,K\ge0$ 有 $X^{A}Y^{B}Z^{K}\in I$。
+\end{lemma}
+
+\begin{proof}
+$X^{A}Y^{B}Z^{K}=Z^{K}\cdot\bigl(X^{A}Y^{B-q-1}\bigr)\cdot Y^{q+1}\in A\,Y^{q+1}\subseteq I$。
+\end{proof}
+
+\begin{remark}[左理想与双边理想：一个必须警惕的陷阱]\label{rem:two-sided}
+$I=AX^{p+1}+AY^{q+1}$ 只是\textbf{左}理想，因此 $X^{p+1}$ 只“从右端”吸收左侧的因子；
+右乘会破坏成员性。这一点是本题的真正难点。例如取 $p=q=1$，则 $X^{2}Y\notin I$：
+在 PBW 基 $\{X^3,X^2Y,XY^2,Y^3,XZ,YZ\}$ 下
+$A_2X^2+A_2Y^2=\operatorname{span}\{X^3,\;X^2Y-2XZ,\;XY^2,\;Y^3\}$，
+而 $X^2Y=(X^2Y-2XZ)+2XZ$，其中 $XZ$ 不在该子空间内，故 $X^2Y\notin I$。
+
+于是“在双边商代数 $A/(AX^{p+1}A+AY^{q+1}A)$ 中 $x^{p+1}=y^{q+1}=0$”这类
+看似自然的论证\textbf{不足以}推出 $(X+Y)^N\in I$。作为对照，双边版本确实成立并且容易证明
+（见命题 \ref{prop:twosided}），但它给出的是 $(X+Y)^N$ 属于更大的双边理想，推不出本题结论。
+\end{remark}
+
+\begin{proposition}[双边版本，作为技术练习]\label{prop:twosided}
+设 $R$ 是特征零的结合代数，$x,y\in R$，$z:=xy-yx$ 中心，且 $x^{p+1}=y^{q+1}=0$（作为元素）。
+则 $(x+y)^{2p+2q+1}=0$ 在 $R$ 中成立。
+\end{proposition}
+
+\begin{proof}
+由 $x^{p+1}=0$ 与交换子展开 $x^{n}y=\sum_j\binom{n}{j}(\ad_x^{j}y)x^{n-j}$，
+并对 $m$ 用 $x^{p+1}y^{m}=0$ 得
+$\sum_{j=1}^{\min(p+1,m)}\binom{p+1}{j}\frac{m!}{(m-j)!}y^{m-j}z^{j}x^{p+1-j}=0$。
+对 $J=1,\dots,p+1$ 取 $m=J$ 并作降 $J$ 归纳（$j<J$ 的项已被归纳假设消去），
+得 $z^{J}x^{p+1-J}=0$；同理 $z^{J}y^{q+1-J}=0$（$J=1,\dots,q+1$）。
+于是对 $a\le p$，$k+a\ge p+1$ 时 $z^{k}x^{a}=z^{k-(p+1-a)}\bigl(z^{p+1-a}x^{a}\bigr)=0$。
+把定理 \ref{thm:trinomial} 的 \eqref{eq:tri} 代入（$N=2p+2q+1$）：
+$a\ge p+1$ 或 $b\ge q+1$ 的项为零；其余各项满足 $a\le p,b\le q$，
+若 $k+a\ge p+1$ 则该项为零，否则 $k+b=N-a-k\ge N-p=p+2q+1\ge q+1$，该项亦为零。
+故 $(x+y)^{N}=0$。
+\end{proof}
+
+\begin{remark}
+命题 \ref{prop:twosided} 说明：\textbf{若}能把 $x^{p+1}v=0$ 提升为“$x^{p+1}=0$”，
+问题就迎刃而解；但如注 \ref{rem:two-sided} 所示，这一提升在本题中\textbf{不成立}。
+第 \ref{sec:proof} 节的证明完全工作在左理想层面。
+\end{remark}
+
+\section{主定理的证明}\label{sec:proof}
+
+\subsection{沿直线的分解}
+
+固定 $p,q\ge0$ 与 $N:=2p+2q+1$。由命题 \ref{prop:degree}，只需证明 $A_N\subseteq I$。
+$A_N$ 的基是全体满足 $A+B+2K=N$ 的单项式 $X^AY^BZ^K$。
+
+对这样的单项式令
+\[
+\delta:=A-B,\qquad M:=\frac{N-\delta}{2},\qquad b:=B ,
+\]
+则 $A=b+\delta$，$K=M-b$（因为 $b+\delta+b+2(M-b)=\delta+2M=N$）。
+于是固定 $\delta$ 后，所有单项式被参数 $b$ 编号：
+\begin{equation}\label{eq:line-monomial}
+P_b:=X^{b+\delta}Y^{b}Z^{M-b}\qquad(b\in\Z),
+\end{equation}
+它有意义（即三个指数非负）当且仅当
+$b\ge b_{\min}:=\max(0,-\delta)$ 且 $b\le M$。称集合
+$\{P_b\}$ 为\textbf{直线 $\delta$}（在次数 $N$ 上）。记 $u_b\in M=A/I$ 为 $P_b$ 的类，
+并对无意义的 $b$ 约定 $u_b:=0$。
+
+\subsection{直线的方程组}
+
+由引理 \ref{lem:triv}（取 $B=b$）立即得到：
+\begin{equation}\label{eq:known-zero}
+b\ge q+1\quad\Longrightarrow\quad u_b=0 .
+\end{equation}
+由引理 \ref{lem:line}（取 $A=b+\delta$，$B=b$，$K=M-b$）得到：对
+\begin{equation}\label{eq:anchor}
+b\in[b_0,\,M],\qquad b_0:=\max(p+1-\delta,\,0),
+\end{equation}
+有
+\begin{equation}\label{eq:system}
+\sum_{j=0}^{p+1}(-1)^{j}\,c_{b,j}\,u_{b-j}=0,
+\qquad c_{b,j}:=\frac{b!}{(b-j)!}\binom{p+1}{j},
+\end{equation}
+其中约定当 $j>b$ 时 $c_{b,j}=0$，当 $b-j$ 无意义时 $u_{b-j}=0$。
+（验证：引理 \ref{lem:line} 的第 $j$ 项是
+$X^{b+\delta-j}Y^{b-j}Z^{M-b+j}=P_{b-j}$，故 \eqref{eq:system} 正是 $R(b+\delta,b,M-b)\in I$。）
+
+由 \eqref{eq:known-zero}，未知量只有
+\[
+u_b,\qquad b\in[b_{\min},\,D],\qquad D:=\min(M,q).
+\]
+我们的目标是证明它们全为零。
+
+\subsection{两个线性代数引理}
+
+\begin{lemma}[三角形子式]\label{lem:triangular}
+设 $\delta\ge p+1$。则 \eqref{eq:system} 蕴涵 $u_b=0$ 对一切 $b$ 成立。
+\end{lemma}
+
+\begin{proof}
+此时 $b_0=0$，故 \eqref{eq:system} 对一切 $b\in[0,M]$ 成立。取未知量 $u_0,\dots,u_D$
+与方程 $b=0,\dots,D$（合法，因为 $D\le M$），得方阵
+\[
+W_{b,c}=(-1)^{b-c}c_{b,\,b-c}=(-1)^{b-c}\frac{b!}{c!}\binom{p+1}{b-c},
+\qquad 0\le b,c\le D ,
+\]
+（当 $b-c<0$ 或 $b-c>p+1$ 时约定为 $0$）。由于 $c>b$ 时 $b-c<0$ 使该项为零，
+$W$ 是\textbf{下三角}矩阵，且对角元 $W_{bb}=(-1)^0\frac{b!}{b!}\binom{p+1}{0}=1\ne0$。
+故 $\det W=1\ne0$，从而 $u_0=\cdots=u_D=0$；再由 \eqref{eq:known-zero} 与 $u_b=0$（$b>M$）得所有 $u_b=0$。
+\end{proof}
+
+\begin{lemma}[$\delta\le-1$ 的情形]\label{lem:negative}
+设 $\delta\le-1$。则 \eqref{eq:system} 蕴涵 $u_b=0$ 对一切 $b$ 成立。
+\end{lemma}
+
+\begin{proof}
+此时 $b_{\min}=-\delta=|\delta|$，$b_0=p+1+|\delta|$，且
+$M=\frac{N-\delta}{2}=p+q+\frac{1+|\delta|}{2}\ge p+q+1$，故 $D=\min(M,q)=q$。
+若 $|\delta|>q$ 则无未知量，结论平凡；以下设 $|\delta|\le q$。
+取未知量 $u_{|\delta|},\dots,u_{q}$（个数 $K+1$，$K:=q-|\delta|$）与方程
+$b=b_0+i$，$i=0,\dots,K$（合法：$b_0+K=p+1+|\delta|+q-|\delta|=p+1+q\le M$）。
+在指标 $i=b-b_0$、$j=c-|\delta|$ 下矩阵元素为
+\[
+W_{ij}=(-1)^{b-c}c_{b,b-c},\qquad b-c=p+1+i-j .
+\]
+由 $0\le b-c\le p+1$ 得 $i\le j$；故 $W$ 是\textbf{上三角}矩阵，且对角元
+$W_{ii}=(-1)^{p+1}\frac{b!}{c!}\binom{p+1}{p+1}=(-1)^{p+1}\frac{b!}{c!}\ne0$。
+故该方阵可逆，从而 $u_b=0$（$|\delta|\le b\le q$）；结合 \eqref{eq:known-zero} 得所有 $u_b=0$。
+\end{proof}
+
+\begin{lemma}[少项式重数界]\label{lem:fewnomial}
+设 $\K$ 特征为零，$f\in\K[t]$ 非零且恰有 $k$ 个非零系数（即 $f=\sum_{i=1}^{k}c_it^{e_i}$，
+$e_1<\cdots<e_k$，$c_i\ne0$）。则对任意 $c\in\K^{\times}$，$c$ 作为 $f$ 的根的重数 $\le k-1$。
+\end{lemma}
+
+\begin{proof}
+平移/伸缩可设 $c=1$。若重数 $\ge k$，则 $f(1)=f'(1)=\cdots=f^{(k-1)}(1)=0$，即
+$\sum_{i=1}^{k}c_i\,(e_i)_j=0$（$j=0,\dots,k-1$），其中 $(e)_j=e(e-1)\cdots(e-j+1)$。
+矩阵 $\bigl((e_i)_j\bigr)_{0\le j\le k-1,\,1\le i\le k}$ 的第 $j$ 行是关于 $e$ 的首一 $j$ 次多项式
+在 $e=e_i$ 处的取值，故它由 Vandermonde 矩阵 $(e_i^{\,j})$ 经单位上三角行变换得到，
+行列式 $\prod_{i<i'}(e_{i'}-e_i)\ne0$。于是 $c_i=0$ 与 $f\ne0$ 矛盾。
+\end{proof}
+
+\begin{lemma}[少项式论证]\label{lem:gf}
+设 $W$ 是 $\K$-向量空间，$(u_b)_{b\in\Z}\subseteq W$ 满足 $u_b=0$（$b<0$ 或 $b>D$）。
+设 $p\ge0$，且存在 $0\le b_0\le M$ 使得
+\[
+r_b:=\sum_{j=0}^{p+1}(-1)^j\frac{b!}{(b-j)!}\binom{p+1}{j}u_{b-j}=0
+\qquad\text{对一切}\ b\in[b_0,M].
+\]
+若
+\begin{equation}\label{eq:count}
+b_0+\max\bigl(0,\;D+p+1-M\bigr)\le p+1,
+\end{equation}
+则 $u_b=0$ 对一切 $b$ 成立。
+\end{lemma}
+
+\begin{proof}
+在 $W[\![t]\!]$ 中令 $U(t):=\sum_{b\ge0}u_b\dfrac{t^b}{b!}$（有限和）与
+$H(t):=(1-t)^{p+1}U(t)$。直接计算给出
+\[
+H(t)=\sum_{b\ge0}\frac{r_b}{b!}\,t^{b},\qquad
+r_b=\sum_j(-1)^{j}\binom{p+1}{j}\frac{b!}{(b-j)!}u_{b-j},
+\]
+即 $H$ 的 $t^b$ 系数（除以 $b!$）为 $r_b$。于是由假设与 $u_b=0$（$b>D$）知 $H$ 的系数仅在
+\[
+b\in[0,b_0-1]\ \cup\ [M+1,\,D+p+1]
+\]
+中可能非零；故 $H$ 非零系数的个数至多 \eqref{eq:count} 的左端，记为 $\kappa$，且
+$\kappa\le p+1$。
+
+若 $H\ne0$：取 $b_*$ 与线性泛函 $\lambda:W\to\K$ 使 $\lambda(u_{b_*})\ne0$，则
+$\lambda\circ H\ne0$ 是 $\K[t]$ 中的非零多项式，非零系数个数 $\le\kappa$，
+且由 $H=(1-t)^{p+1}U$ 知 $t=1$ 是它的重数 $\ge p+1$ 的根。
+由引理 \ref{lem:fewnomial} 得 $p+1\le\kappa-1\le p$，矛盾。故 $H=0$，
+于是 $U=0$（$\K[t]$ 是整环），即所有 $u_b=0$。
+\end{proof}
+
+\begin{lemma}[$1\le\delta\le p$ 的情形]\label{lem:middle}
+设 $1\le\delta\le p$。则 \eqref{eq:system} 蕴涵 $u_b=0$ 对一切 $b$ 成立。
+\end{lemma}
+
+\begin{proof}
+此时 $b_0=p+1-\delta\ge1$，$b_{\min}=0$。又
+$M=p+q+\frac{1-\delta}{2}\ge q$（因为 $p\ge\delta\ge1$ 给出 $p-\frac{\delta-1}{2}\ge0$），故 $D=q$。
+由 \eqref{eq:known-zero} 得 $u_b=0$（$b>q=D$）。把引理 \ref{lem:gf} 应用于 $(u_b)$：条件
+\eqref{eq:count} 的左端等于
+\[
+(p+1-\delta)+\bigl(q+p+1-M\bigr)=(p+1-\delta)+\frac{1+\delta}{2}
+=p+1-\frac{\delta-1}{2}\le p+1 .
+\]
+故引理 \ref{lem:gf} 适用，得所有 $u_b=0$。
+\end{proof}
+
+\subsection{主定理}
+
+\begin{theorem}\label{thm:main}
+设 $\K$ 特征为零，$p,q\ge0$，$N=2p+2q+1$，$I=AX^{p+1}+AY^{q+1}$。则
+\[
+X^{A}Y^{B}Z^{K}\in I\qquad\text{只要}\quad A+B+2K\ge N .
+\]
+特别地 $(X+Y)^{N}\in I$，从而 Conjecture A.1 成立。
+\end{theorem}
+
+\begin{proof}
+由命题 \ref{prop:degree} 只需考虑 $A+B+2K=N$ 的情形。
+固定这样的单项式，取 $\delta=A-B$、$M=(N-\delta)/2$、$b=B$，如 \eqref{eq:line-monomial}。
+因为 $A,B\ge0$ 且 $A+B\le N$，有 $|\delta|\le N$ 且 $0\le M$，直线非空。
+
+情形 (a)：$\delta\ge p+1$。引理 \ref{lem:triangular} 给出 $u_b=0$，特别地 $u_B=0$，即该单项式属于 $I$。
+
+情形 (b)：$1\le\delta\le p$。引理 \ref{lem:middle} 给出 $u_B=0$。
+
+情形 (c)：$\delta\le-1$。引理 \ref{lem:negative} 给出 $u_B=0$。
+
+（注意 $\delta$ 与 $N$ 同奇偶，故 $\delta\ne0$，三种情形已穷尽。）
+于是 $A_N\subseteq I$，再由命题 \ref{prop:degree} 得 $A_n\subseteq I$ 对一切 $n\ge N$。
+最后，$(X+Y)^N$ 是次数为 $N$ 的齐次元，故 $(X+Y)^N\in A_N\subseteq I$；由命题 \ref{prop:reduce}
+即得 Conjecture A.1。
+\end{proof}
+
+\begin{corollary}[商模的结构]\label{cor:finite}
+$M_{p,q}=A/(AX^{p+1}+AY^{q+1})$ 是有限维分次 $A$-模，且 $M_d=0$ 对一切 $d\ge2p+2q+1$。
+\end{corollary}
+
+\begin{corollary}[原文两个引理的特例]\label{cor:paper}
+在 $p=0$（或 $q=0$）时取 $N=2q+1$（相应 $2p+1$），在 $p=q=1$ 时取 $N=5$，
+即得文~[1] 的引理 A.3 与引理 A.4 的结论。
+\end{corollary}
+
+\section{与原文应用的对接}\label{sec:app}
+
+我们说明定理 \ref{thm:main} 如何给出文~[1] 附录 A 所需的全部 Serre 关系，
+并指出它比原文的“逐情形检查”更强。
+
+回忆文~[1] 附录 A 的设置：$\g$ 是仿射广义 Cartan 矩阵 $(a_{ij})$ 对应的 Kac--Moody 代数的
+导代数，$\{e_i,f_i,\alpha_i^\vee\}_{i=0,\dots,\ell}$ 是 Chevalley 生成元，$\sbar$ 是满足
+$a_{ij}=a_{\sbar(i)\sbar(j)}$ 的图谱自同构，$\sigma(e_i)=e_{\sbar(i)}$。对轨道 $\langle i\rangle$ 令
+\[
+b_i=3-\sum_{j\in\langle i\rangle}a_{ji},\qquad
+E_i=\sum_{k\in\langle i\rangle}e_k,\quad
+F_i=b_i\sum_{k\in\langle i\rangle}f_k,\quad
+H_i=b_i\sum_{k\in\langle i\rangle}\alpha_k^\vee,\quad
+A_{ij}=b_i\sum_{k\in\langle i\rangle}a_{kj}.
+\]
+文~[1] 已证 $[H_i,H_j]=0$、$[E_i,F_j]=\delta_{ij}H_i$、$[H_i,E_j]=A_{ij}E_j$、$[H_i,F_j]=-A_{ij}F_j$
+（引理 A.1），以及 $b_i=1$ 时的 Serre 关系（引理 A.2）。剩下降 $b_i=2$。
+
+\begin{proposition}[降 $b_i=2$ 的 Serre 关系]\label{prop:serre}
+设 $b_i=2$，即 $\langle i\rangle=\{i,\sbar(i)\}$、$a_{i\sbar(i)}=a_{\sbar(i)i}=-1$，并记
+\[
+X=\ad e_i,\quad Y=\ad e_{\sbar(i)},\quad Z=[X,Y],\qquad v=e_j,\quad p=-a_{ij},\ q=-a_{\sbar(i)j}.
+\]
+则 $Z$ 是中心的（即 $[X,Z]=[Y,Z]=0$），$X^{p+1}v=Y^{q+1}v=0$，从而
+$\ad_{E_i}^{1-A_{ij}}E_j=0$。
+\end{proposition}
+
+\begin{proof}
+$Z=[X,Y]=\ad[e_i,e_{\sbar(i)}]$，而 $[X,Z]=\ad[e_i,[e_i,e_{\sbar i}]]=0$ 与
+$[Y,Z]=\ad[e_{\sbar i},[e_i,e_{\sbar i}]]=0$ 正是 Serre 关系
+$\ad_{e_i}^{1-a_{i\sbar i}}e_{\sbar i}=\ad_{e_i}^{2}e_{\sbar i}=0$ 与
+$\ad_{e_{\sbar i}}^{2}e_i=0$（因 $1-a_{i\sbar i}=2$）。又 $X^{p+1}v=\ad_{e_i}^{1-a_{ij}}e_j=0$、
+$Y^{q+1}v=\ad_{e_{\sbar i}}^{1-a_{\sbar i j}}e_j=0$ 是 $\g$ 的 Serre 关系。
+于是定理 \ref{thm:main}（或直接 Conjecture A.1）给出
+\[
+0=(X+Y)^{2p+2q+1}v=\ad_{E_i}^{\,2p+2q+1}e_j .
+\]
+由 $A_{ij}=b_i(a_{ij}+a_{\sbar i j})=2(-p-q)$（注意 $b_i=2$）得
+$1-A_{ij}=1+2(p+q)$，而 $2p+2q+1=2(p+q)+1$，两者一致。故
+$\ad_{E_i}^{1-A_{ij}}E_j=0$。同理（用对合 $e\leftrightarrow f$）得 $\ad_{F_i}^{1-A_{ij}}F_j=0$。
+\end{proof}
+
+\begin{remark}
+定理 \ref{thm:main} 对任意 $p,q\ge0$ 成立，因此不再需要文~[1] 中“在满足 linking 条件的
+情形下 $p,q\in\{0,1\}$，故只需引理 A.2、A.3”这一逐情形讨论；对所有仿射情形
+（包括 $|A_{ij}|\le4$ 带来的 $p,q\le2$ 等）都自动成立。原文对“$|\delta|$ 大”的直线
+所需的估计，正是本文引理 \ref{lem:triangular} 与 \ref{lem:negative} 处理的部分。
+\end{remark}
+
+\section{最优性}\label{sec:sharp}
+
+\begin{proposition}[指数的不可改进性；精确核验]\label{prop:sharp}
+对一切 $0\le p,q\le6$，在 $M_{p,q}$ 中有
+\[
+(X+Y)^{n}v_0\ne0\quad(n<2p+2q+1),\qquad
+(X+Y)^{2p+2q+1}v_0=0 ,
+\]
+即 $N=2p+2q+1$ 在万能模中是\textbf{精确的}幂零指数。此外 $Z^{p+q+1}$ 是 $Z$ 在 $M_{p,q}$ 中的
+精确幂零指数。
+\end{proposition}
+
+\begin{proof}[说明]
+这不是证明，而是第 \ref{sec:numerics} 节的精确有理数计算的结论（$p,q\le6$，共 49 组）。
+它与定理 \ref{thm:main} 一起表明：本文给出的指数在最一般的 $(V,v)$ 意义下不能被改进。
+（若只要求对原文出现的仿射情形成立，则因 $p,q\in\{0,1\}$，可以取得更小的指数；
+这正是原文只处理 $p=q=1$ 的原因。）
+\end{proof}
+
+\section{数值核验（不作为证明）}\label{sec:numerics}
+
+\subsection{算法}
+
+由于 $I$ 是分次左理想且由齐次元生成，
+\[
+I_d=A_{d-p-1}X^{p+1}+A_{d-q-1}Y^{q+1}\qquad(d\ge0),
+\]
+其中 $A_{e}$ 以 $\{X^aY^bZ^k: a+b+2k=e\}$ 为基，
+$A_{e}X^{p+1}$ 由 \eqref{eq:normal} 正规序展开（$n=p+1$），
+$A_{e}Y^{q+1}=\{X^aY^{b+q+1}Z^k: a+b+2k=e\}$。
+于是 $M_d=A_d/I_d$ 是有限维 $\Q$-向量空间，全部运算可在 $\Q$ 上精确进行
+（$\mathbb{F}$raction 算术，无浮点误差）。我们逐步计算
+$v_{n+1}=\text{reduce}((X+Y)v_n)$ 并判定其是否为零。
+
+\subsection{主要结果}
+
+\begin{table}[htbp]
+\centering
+\caption{$\min\{n:(X+Y)^nv_0=0\}$ 在 $M_{p,q}$ 中的值（精确计算）。全部等于 $2p+2q+1$。}
+\label{tab:N}
+\begin{tabular}{c|ccccccc}
+\toprule
+$p\backslash q$ & 0 & 1 & 2 & 3 & 4 & 5 & 6\\
+\midrule
+0 & 1 & 3 & 5 & 7 & 9 & 11 & 13\\
+1 & 3 & 5 & 7 & 9 & 11 & 13 & 15\\
+2 & 5 & 7 & 9 & 11 & 13 & 15 & 17\\
+3 & 7 & 9 & 11 & 13 & 15 & 17 & 19\\
+4 & 9 & 11 & 13 & 15 & 17 & 19 & 21\\
+5 & 11 & 13 & 15 & 17 & 19 & 21 & 23\\
+6 & 13 & 15 & 17 & 19 & 21 & 23 & 25\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{$M_{p,q}$ 的 Hilbert 函数 $\dim M_d$（$d=0,1,\dots$）。}
+\label{tab:hilbert}
+\begin{tabular}{c|l}
+\toprule
+$(p,q)$ & $(\dim M_d)_{d\ge0}$\\
+\midrule
+$(0,0)$ & $1,0,0,\dots$\\
+$(0,1)$ & $1,1,1,0,\dots$\\
+$(1,1)$ & $1,2,2,2,1,0,\dots$\\
+$(1,2)$ & $1,2,3,3,3,2,1,0,\dots$\\
+$(2,2)$ & $1,2,4,4,5,4,4,2,1,0,\dots$\\
+$(3,3)$ & $1,2,4,6,7,8,8,8,7,6,4,2,1,0,\dots$\\
+$(4,4)$ & $1,2,4,6,9,10,12,12,13,12,12,10,9,6,4,2,1,0,\dots$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+注意表 \ref{tab:hilbert} 中最后一位非零次数恰为 $2p+2q$，与定理 \ref{thm:main} 及
+命题 \ref{prop:sharp} 一致。
+
+表 \ref{tab:mono} 给出 $p=q=1$ 时各单项式 $X^aY^bZ^k$ 在 $M_{1,1}$ 中是否为零。
+它清楚地显示了左理想的“单侧性”：$X^2\in I$ 而 $X^2Y\notin I$；
+$Z^2\ne0$ 而 $XZ^2=0$；$ZX\ne0$。
+
+\begin{table}[htbp]
+\centering
+\caption{$p=q=1$：单项式 $X^aY^bZ^k$ 在 $M_{1,1}$ 中的消失模式（$\circ$ 表示非零，$\bullet$ 表示零）。}
+\label{tab:mono}
+\begin{tabular}{c|ccccccccc}
+\toprule
+$k$ & $(0,0)$ & $(1,0)$ & $(0,1)$ & $(1,1)$ & $(2,0)$ & $(2,1)$ & $(0,2)$ & $(1,2)$ & $(2,2)$\\
+\midrule
+0 & $\circ$ & $\circ$ & $\circ$ & $\circ$ & $\bullet$ & $\circ$ & $\bullet$ & $\bullet$ & $\bullet$\\
+1 & $\circ$ & $\circ$ & $\circ$ & $\circ$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$\\
+2 & $\circ$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$\\
+3 & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{对中间结论的核验}
+
+除主结论外，我们还逐项核验了证明用到的每个中间断言（全部在 $\Q$ 上精确进行）：
+
+\begin{enumerate}[label=(\arabic*)]
+\item 三项式公式 \eqref{eq:tri}：$n\le8$ 全部成立（直接展开正规序比较）。
+\item 正规序公式 \eqref{eq:normal}：$0\le p,B\le5$ 全部成立；
+直线关系 \eqref{eq:line-exact}：$0\le p\le3$、$p+1\le A\le p+4$、$0\le B\le4$、$0\le K\le2$ 全部成立。
+\item 情形 (a)、(c) 中的三角形子式：对 $p,q\le4$ 及一切可能的 $\delta$ 直接验证了
+系数矩阵（限制到未知量后）为列满秩；其中 $\delta\ge p+1$ 时对角元全为 $1$（下三角），
+$\delta\le-1$ 时的子式为上三角，行列式非零（例如 $(p,q,\delta)=(2,2,-1)$ 时
+$\det=1440$，$(2,3,-1)$ 时 $\det=-172800$）。
+\item 情形 (b) 的计数条件 \eqref{eq:count}：对 $p\le5$、$q\le5$、$1\le\delta\le p$ 全部满足。
+\item 平凡消失（引理 \ref{lem:triv}）与反例 $X^2Y\notin I$（注 \ref{rem:two-sided}）。
+\item $Z^{k}B_{m}\in I$ 当且仅当 $2k+m\ge 2p+2q+1$（$p,q\le4$ 的全部 $(k,m)$），
+这与推论 \ref{cor:Zdecomp} 及定理 \ref{thm:main} 完全吻合。
+\end{enumerate}
+
+\subsection{关于数值核验的地位}
+
+以上计算是对定理的\textbf{独立检验}（例如可用来发现引理陈述中的符号或指标错误），
+但它们\textbf{不是证明}：定理 \ref{thm:main} 的证明完全是符号性的，对一切 $p,q$ 成立。
+第 \ref{sec:relations}--\ref{sec:sharp} 节中每一个被引用的断言都有书面证明。
+
+\section*{致谢}
+本报告在整理过程中使用了精确有理数线性代数程序对所涉理想成员问题与边界条件作了系统核验，
+这些核验仅作为独立检验，正文的论证不依赖任何数值计算。
+
+\appendix
+\addcontentsline{toc}{section}{附录 A\quad 技术文档（附注）}
+\section*{附录 A\quad 技术文档：本文用到的技巧汇总（附注）}
+\addcontentsline{toc}{subsection}{A.1\quad 正规序与 PBW 基}
+\subsection*{A.1\quad 正规序与 PBW 基}
+
+\noindent\textbf{用途。}把“非交换”问题化为有限维线性代数。
+
+\noindent\textbf{内容。}由 PBW 定理 [5]，$A=U(\hh_1)$ 以
+$\{X^{a}Y^{b}Z^{k}: a,b,k\ge0\}$ 为基，且 $Z$ 中心。因此任意元素可唯一写成正规序
+（$X$ 在左、$Y$ 居中、$Z$ 在右）的组合。所有“把 $Y$ 移到 $X$ 左边”的操作只会产生
+$Z$ 的幂（因为 $YX=XY-Z$）。
+
+\noindent\textbf{要点。}(i) 次数 $\deg X=\deg Y=1$、$\deg Z=2$ 使 $A$ 成为分次代数；
+(ii) 齐次左理想 $I$ 满足 $I_d=A_{d-p-1}X^{p+1}+A_{d-q-1}Y^{q+1}$，故 $M_d=A_d/I_d$
+可用精确线性代数处理；(iii) 正规序公式 \eqref{eq:normal} 是关键计算工具。
+
+\addcontentsline{toc}{subsection}{A.2\quad 交换子展开（$\ad$-Taylor 引理）}
+\subsection*{A.2\quad 交换子展开（$\ad$-Taylor 引理）}
+
+\noindent\textbf{陈述。}设 $R$ 是结合代数，$x,y\in R$，$D=\ad_x$。则对 $n\ge1$
+\[
+x^{n}y=\sum_{j=0}^{n}\binom{n}{j}\bigl(D^{j}y\bigr)x^{n-j}.
+\]
+若 $z=[x,y]$ 中心，则 $D^{j}(y^{m})=\dfrac{m!}{(m-j)!}y^{m-j}z^{j}$（$j\le m$），从而
+\[
+x^{n}y^{m}=\sum_{j=0}^{\min(n,m)}\binom{n}{j}\frac{m!}{(m-j)!}y^{m-j}z^{j}x^{n-j}.
+\]
+
+\noindent\textbf{证明。}$D$ 是导子，故 $x^{n}y-y\,x^{n}=\sum_{j\ge1}\binom{n}{j}(D^jy)x^{n-j}$
+（对 $n$ 归纳，用 $\binom{n}{j}+\binom{n}{j-1}=\binom{n+1}{j}$）。
+当 $z$ 中心时 $D(z)=0$，故 $D(y^m)=my^{m-1}z$，归纳得 $D^j(y^m)=\frac{m!}{(m-j)!}y^{m-j}z^j$。
+
+\noindent\textbf{用途。}引理 \ref{lem:normal}（$x=X$，$y=Y$，$n\mapsto p+1$）与命题 \ref{prop:twosided}
+中的关系 $z^{J}x^{p+1-J}=0$ 都来自它。
+
+\addcontentsline{toc}{subsection}{A.3\quad 广义二项式定理}
+\subsection*{A.3\quad 广义二项式定理（三项式公式）}
+
+\noindent\textbf{陈述。}$[X,Y]=Z$ 中心时，
+$(X+Y)^n=\sum_{a+b+2k=n}\frac{n!}{a!b!k!}(-\frac12)^kX^aY^bZ^k$（定理 \ref{thm:trinomial}）。
+
+\noindent\textbf{两条证明路线。}(i) 初等归纳：用 $(X+Y)X^aY^bZ^k=X^{a+1}Y^bZ^k+X^aY^{b+1}Z^k-aX^{a-1}Y^bZ^{k+1}$
+与三项系数恒等式 $A+B+2K=n+1$；(ii) 形式的 BCH：$e^{t(X+Y)}=e^{-t^2Z/2}e^{tX}e^{tY}$，
+比较 $t^n$ 系数。后者指明“$-\frac12$”这一系数的来源（$Z$ 是 $[X,Y]$，故每产生一个 $Z$ 付出因子 $1/2$）。
+
+\noindent\textbf{用途与含义。}(i) 推论 \ref{cor:Zdecomp} 把 $(X+Y)^N$ 分解为
+$Z^kB_{N-2k}$；(ii) 它解释了指数 $2p+2q+1=2(p+q)+1$：每个 $Z$ 幂“消耗”2 个总次数，
+而 $Z$ 至多可以出现 $p+q$ 次（否则被 $I$ 吸收），故临界次数大致是 $2(p+q)+1$；
+(iii) 它是注 \ref{rem:why} 的定量版本。
+
+\addcontentsline{toc}{subsection}{A.4\quad 左理想与双边理想：一个陷阱}
+\subsection*{A.4\quad 左理想与双边理想：一个陷阱}
+
+\noindent\textbf{要点。}$I=AX^{p+1}+AY^{q+1}$ 是左理想，$X^{p+1}$ 只“从右端”吸收左侧因子；
+右乘不保持成员性。因此\textbf{不能}把 $X^{p+1}v=0$（向量级假设）当作 $X^{p+1}=0$（元素级假设）使用。
+
+\noindent\textbf{代价。}(i) 命题 \ref{prop:twosided}（双边版本）虽然证明简单，但只能给出
+$(X+Y)^N$ 属于更大的双边理想 $AX^{p+1}A+AY^{q+1}A$，推不出本题；(ii) 反例 $X^2Y\notin I$（$p=q=1$）
+说明差别是实质的。
+
+\noindent\textbf{补救。}改用“只从左侧乘”的直线关系 \eqref{eq:line}：$(X^{A-p-1}Y^BZ^K)X^{p+1}$
+给出正常规序的直线方程 \eqref{eq:system}，把问题变成沿直线的线性方程组。这是本文证明的核心技巧。
+
+\addcontentsline{toc}{subsection}{A.5\quad 少项式重数界}
+\subsection*{A.5\quad 少项式重数界（Descartes 型）}
+
+\noindent\textbf{陈述。}特征零域上恰有 $k$ 个非零系数的非零多项式，在任一非零点的根重数 $\le k-1$（引理 \ref{lem:fewnomial}）。
+
+\noindent\textbf{证明。}化到 $t=1$；若重数 $\ge k$，则 $(e_i)_j$（$j=0,\dots,k-1$）组成的
+$k\times k$ 矩阵奇异，但它是 Vandermonde 矩阵经单位上三角行变换所得，行列式
+$\prod_{i<i'}(e_{i'}-e_i)\ne0$，矛盾。
+
+\noindent\textbf{用途。}引理 \ref{lem:gf}：把直线方程打包成生成函数 $U(t)=\sum u_bt^b/b!$，
+则 $H(t)=(1-t)^{p+1}U(t)$ 的“支撑”位于两端的小区间内；若 $H\ne0$，它的非零项数 $\kappa\le p+1$，
+但它在 $t=1$ 处有重数 $\ge p+1$ 的根，违背引理 \ref{lem:fewnomial}。这是处理 $1\le\delta\le p$
+情形的关键（其余两种情形用三角形子式，更初等）。
+
+\addcontentsline{toc}{subsection}{A.6\quad 精确有理数线性代数核验}
+\subsection*{A.6\quad 精确有理数线性代数核验}
+
+\noindent\textbf{算法。}对每个次数 $d$：列 $A_d$ 的基（满足 $a+b+2k=d$ 的单项式），
+按 \eqref{eq:normal} 算出 $I_d$ 的生成元，用有理数 Gauss 消元求 $A_d/I_d$ 的坐标；
+再逐步计算 $v_{n+1}=(X+Y)v_n$ 的化简结果。全部用 $\Q$（\texttt{Fraction}）精确运算。
+
+\noindent\textbf{输出。}(i) 表 \ref{tab:N}：最小幂零指数 $=2p+2q+1$（$p,q\le6$）；
+(ii) 表 \ref{tab:hilbert}：$\dim M_d$；(iii) 对 \S\ref{sec:numerics} 所列六类中间断言的逐项核验。
+
+\noindent\textbf{地位。}这是\textbf{独立检验}，用于发现书写错误（例如指标、符号、系数），
+\textbf{不构成证明}；正文定理 \ref{thm:main} 的证明是纯符号的。
+
+\addcontentsline{toc}{subsection}{A.7\quad 符号表}
+\subsection*{A.7\quad 符号表}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+符号 & 含义\\
+\midrule
+$[X,Y]=XY-YX$ & 交换子（见注 \ref{rem:conv}）\\
+$A=U(\hh_1)$ & 由 $X,Y,Z$ 生成、$Z=[X,Y]$ 中心的 Heisenberg 代数\\
+$X^aY^bZ^k$ & 正规序（PBW）单项式\\
+$A_d$ & 次数为 $d$ 的齐次分量（$\deg X=\deg Y=1,\deg Z=2$）\\
+$I=I_{p,q}=AX^{p+1}+AY^{q+1}$ & 分次\textbf{左}理想\\
+$M=M_{p,q}=A/I$ & 万能模，$v_0=1+I$\\
+$N=2p+2q+1$ & 主定理中的临界次数\\
+$\delta=A-B,\ M=(N-\delta)/2$ & 直线参数（$P_b=X^{b+\delta}Y^bZ^{M-b}$）\\
+$u_b$ & $P_b$ 在 $M$ 中的类\\
+$b_0=\max(p+1-\delta,0)$ & 直线的“锚点”下界\\
+$D=\min(M,q)$ & 未知量上界\\
+$c_{b,j}=\frac{b!}{(b-j)!}\binom{p+1}{j}$ & 直线方程的系数\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{thebibliography}{99}
+
+\bibitem{LWZZ} S.-Q. Liu, C.-Z. Wu, Y. Zhang, X. Zhou,
+\emph{Drinfeld--Sokolov hierarchies and diagram automorphisms of affine Kac--Moody algebras},
+Comm. Math. Phys. \textbf{375} (2020), 785--832.
+DOI: \href{https://doi.org/10.1007/s00220-019-03568-4}{10.1007/s00220-019-03568-4}.
+（Conjecture A.1 的出处；本文引用的引理编号均指其附录 A。）
+
+\bibitem{KacBook} V. G. Kac,
+\emph{Infinite-Dimensional Lie Algebras}, 3rd ed., Cambridge University Press, Cambridge, 1990.
+（仿射 Kac--Moody 代数、Chevalley 生成元与 Serre 关系的标准参考。）
+
+\bibitem{FSS} J. Fuchs, B. Schellekens, C. Schweigert,
+\emph{From Dynkin diagram symmetries to fixed point structures},
+Comm. Math. Phys. \textbf{180} (1996), 39--97.
+（linking 条件与折叠 Cartan 矩阵的来源，即文~[1] 的文献 [9]。）
+
+\bibitem{Kac68} V. G. Kac,
+\emph{Simple irreducible graded Lie algebras of finite growth},
+Math. USSR Izv. \textbf{2} (1968), 1271--1311.
+（文~[1] 用来判定“折叠 Cartan 矩阵对应仿射代数”的 Proposition 13 的出处。）
+
+\bibitem{Dixmier} J. Dixmier,
+\emph{Enveloping Algebras}, North-Holland Mathematical Library 14, North-Holland, Amsterdam, 1977.
+（PBW 定理与泛包络代数的标准参考。）
+
+\bibitem{PolyaSzego} G. P\'olya, G. Szeg\H{o},
+\emph{Problems and Theorems in Analysis II}, Springer, Berlin, 1976.
+（Descartes 符号法则与少项式正根个数的经典讨论，见 Part V。）
+
+\bibitem{Block} R. E. Block,
+\emph{The irreducible representations of the Weyl algebra $A_1$},
+in: S\'eminaire d'Alg\`ebre Paul Dubreil (1977/78), Lecture Notes in Math. \textbf{740},
+Springer, Berlin, 1979, 69--79.
+（第一 Weyl 代数有限维模的经典结论；用于说明“$Z$ 可逆”时问题会退化为平凡情形。）
+
+\bibitem{Bourbaki} N. Bourbaki,
+\emph{Lie Groups and Lie Algebras, Chapters 4--6}, Springer, Berlin, 2002.
+（Kac--Moody 代数的 Serre 关系与 Chevalley 生成元的系统处理。）
+
+\bibitem{DS} V. G. Drinfeld, V. V. Sokolov,
+\emph{Lie algebras and equations of Korteweg--de Vries type},
+J. Math. Sci. \textbf{30} (1985), 1975--2036.
+（Drinfeld--Sokolov 梯子的原始文献，文~[1] 的文献 [3]。）
+
+\end{thebibliography}
+
+\end{document}

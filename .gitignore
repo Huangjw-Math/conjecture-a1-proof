@@ -1,0 +1,34 @@
+# LaTeX build artifacts
+*.aux
+*.log
+*.toc
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.nav
+*.snm
+*.vrb
+
+# Lean toolchain / build artifacts (large)
+.lean/
+.leanenv/
+.lake/
+*.olean
+*.ilean
+*.trace
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# scratch
+_tools/
+.lake/

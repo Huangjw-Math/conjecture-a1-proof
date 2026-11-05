@@ -47,6 +47,8 @@ def I_basis(d, p, q):
 
 class Quotient:
     def __init__(self, p, q, maxdeg):
+        if min(p, q, maxdeg) < 0:
+            raise ValueError("p, q and maxdeg must be nonnegative")
         self.p, self.q = p, q
         self.basis = {d: basis_degree(d) for d in range(maxdeg + 1)}
         self.index = {d: {m: i for i, m in enumerate(self.basis[d])} for d in self.basis}
@@ -56,7 +58,11 @@ class Quotient:
             self.reduced[d] = self.reduce_basis(I_basis(d, p, q), d)
 
     def reduce_basis(self, gens, d):
-        """Gaussian elimination; returns list of (pivot, dict) in reduced row echelon form"""
+        """Gaussian elimination; returns normalized forward-echelon pivot rows.
+
+        Earlier rows need not have zero entries above later pivots. Reduction in
+        ascending pivot order is sufficient for exact membership decisions.
+        """
         rows = []
         for g in gens:
             rows.append(self.to_index_vector(g, d))
@@ -79,7 +85,9 @@ class Quotient:
 
     def to_index_vector(self, elem, d):
         idx = self.index[d]
-        return {idx[m]: F(c) for m, c in elem.items() if m in idx and c != 0}
+        if any(c != 0 and m not in idx for m, c in elem.items()):
+            raise ValueError("nonzero monomial outside the requested homogeneous degree")
+        return {idx[m]: F(c) for m, c in elem.items() if c != 0}
 
     def to_elem(self, vec, d):
         bd = self.basis[d]
@@ -105,8 +113,6 @@ class Quotient:
     def mulY(self, elem):
         out = {}
         for (a, b, k), c in elem.items():
-            if b + 1 <= self.q + 10**6:
-                pass
             out[(a, b + 1, k)] = out.get((a, b + 1, k), F(0)) + c
             if a >= 1:
                 out[(a - 1, b, k + 1)] = out.get((a - 1, b, k + 1), F(0)) - a * c
@@ -135,15 +141,17 @@ def T_powers(p, q, nmax):
 
 if __name__ == "__main__":
     print("=== (X+Y)^n . 1  in M_{p,q}, minimal n with it = 0 ===")
-    for p in range(0, 5):
+    for p in range(0, 7):
         out = []
-        for q in range(0, 5):
-            nmax = 4 * (p + q) + 8
+        for q in range(0, 7):
+            nmax = 2 * (p + q) + 1
             vs = T_powers(p, q, nmax)
             minimal = None
             for n in range(0, nmax + 1):
                 if not vs[n]:
                     minimal = n
                     break
+            assert minimal == nmax, (p, q, minimal, nmax)
             out.append("(%d,%d)->%s/%s" % (p, q, minimal, 2*p+2*q+1))
         print("  ".join(out))
+    print("PASS: 49 exact quotient cases, 0 <= p,q <= 6; finite evidence only")

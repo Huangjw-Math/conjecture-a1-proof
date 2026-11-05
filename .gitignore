@@ -32,3 +32,8 @@ Thumbs.db
 # scratch
 _tools/
 .lake/
+
+# Machine-local proof/build logs stay outside the review artifact.
+formalization/evidence/
+verification/audit-2026-11-05/
+tmp/

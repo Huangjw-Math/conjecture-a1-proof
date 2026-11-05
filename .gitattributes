@@ -1,0 +1,11 @@
+# Normalize line endings so the repository behaves the same on Windows/macOS/Linux.
+* text=auto eol=lf
+
+# Binaries
+*.pdf binary
+*.png binary
+*.zip binary
+
+# Windows scripts keep CRLF so PowerShell/policy engines are happy
+*.ps1 text eol=crlf
+*.bat text eol=crlf

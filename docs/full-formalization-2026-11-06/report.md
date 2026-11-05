@@ -77,5 +77,12 @@ Mathlib fabf563a7c95a166b8d7b6efca11c8b4dc9d911f 及八个锁定传递依赖。
 精确回归证据继续适用。旧的不同 legacy proposition 保留作兼容，根证明不调用它。
 旧分支和原始本地文件未重写；新公开内容不带机器路径、进程/会话标识或原始运行日志。
 
-用户要求全证明后才重新提交 draft PR。先前集成返回 HTTP 403；本轮在完成全部证明验收后再处理
-实际发布权限，记录 PR 的真实创建结果，不合并。
+## 发布结果与唯一交付阻碍
+
+完整证明提交 `75a895de210d3ca4ad9c3f534b21be6608304f6b` 已正常推送到
+`xsoc1/conjecture-a1-proof` 的 `audit/a1-clean-2026-11-05` 分支，未重写旧分支。
+
+遵守用户“完整形式化后再 PR”的要求，完成上述验收后重新通过原 GitHub 集成创建 draft PR，
+仍返回 **HTTP 403：Resource not accessible by integration**。该调用没有创建 PR。
+证明本身已经完整；剩余的是发布权限：连接所有者修复上游仓库的 PR 权限后，由本任务继续
+创建同一 draft PR。没有绕用其他凭据，没有合并。

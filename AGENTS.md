@@ -113,3 +113,11 @@ No merge is authorized.
 - Final upstream refresh still resolved main to f8f7235. One transport attempt
   failed TLS; the command-scoped Schannel backend succeeded, without changing
   global Git/network configuration. The old worktree remained clean and preserved.
+- Published the clean code snapshot 183368b3428aa755acb80987be43ba3ac2ee900c
+  to the new fork branch. The Git server acknowledged creation of that branch.
+  Creating the requested draft PR through the connected GitHub integration then
+  returned HTTP 403, Resource not accessible by integration. No PR was created.
+  This is the remaining delivery blocker: the connection owner must enable the
+  necessary repository/PR permission, then the coordinator can retry the same
+  authorized draft-creation action. The user may instead create the draft from
+  the published branch. No alternate credential route or merge was attempted.

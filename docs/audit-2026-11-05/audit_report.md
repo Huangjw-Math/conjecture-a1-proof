@@ -119,3 +119,14 @@ python formalization/validate.py --lean-bin $env:LEAN_BIN --mathlib-cache $env:M
 ```
 
 交付方式为新分支的 draft PR，不合并；最终提交与 PR 标识以 Git/GitHub 的实际记录为准。
+
+## 发布回执与剩余阻碍
+
+数学代码快照 `183368b3428aa755acb80987be43ba3ac2ee900c` 已推送到 fork 的新分支
+`audit/a1-clean-2026-11-05`，Git 服务端确认分支创建成功。
+随后通过已连接 GitHub 集成创建 draft PR，返回 **HTTP 403：Resource not accessible by integration**。
+**PR 尚未创建，未执行合并。**
+
+恢复条件：连接所有者修复相应仓库/PR 权限后，协调者重试同一 draft-creation 操作；
+也可由用户从[上游比较页面](https://github.com/Huangjw-Math/conjecture-a1-proof/compare/main...xsoc1:audit/a1-clean-2026-11-05?expand=1)
+选择 **Create draft pull request**。本轮没有换凭据绕过拒绝。

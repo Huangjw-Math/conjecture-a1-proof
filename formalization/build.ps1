@@ -1,4 +1,4 @@
-# build.ps1 — type-check / build the Lean sources in this folder.
+﻿# build.ps1  type-check / build the Lean sources in this folder.
 #
 # Usage:
 #   .\build.ps1                      # check ConjectureA1.lean with `lean` (no Mathlib)

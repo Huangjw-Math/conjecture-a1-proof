@@ -1,7 +1,7 @@
-# setup.ps1 — download a Lean 4 toolchain (and optionally Mathlib sources) using Node.js.
+﻿# setup.ps1  download a Lean 4 toolchain (and optionally Mathlib sources) using Node.js.
 #
 # Why Node?  In this environment Windows schannel is blocked for PowerShell/curl:
-#   Invoke-WebRequest -> "接收时发生错误"
+#   Invoke-WebRequest -> ""
 #   curl.exe          -> schannel: AcquireCredentialsHandle failed: SEC_E_NO_CREDENTIALS
 # while Node's own TLS stack works (verified: https://github.com -> 200).
 #

@@ -1,4 +1,4 @@
-﻿# push.ps1 — create the GitHub repository (if absent) and push.
+﻿# push.ps1  create the GitHub repository (if absent) and push.
 #
 # Requires a GitHub Personal Access Token (PAT) for the account Huangjw-Math
 # with the `repo` scope:  https://github.com/settings/tokens
@@ -6,13 +6,17 @@
 # Why this script: in this environment `git` is configured with
 # `http.sslBackend=schannel`, which fails with
 #   schannel: AcquireCredentialsHandle failed: SEC_E_NO_CREDENTIALS
-# Using `-c http.sslBackend=openssl` works (verified: `git ls-remote` succeeds),
-# and PowerShell/curl HTTPS is also blocked, so the repo is created through the
-# GitHub REST API using Node.js (whose TLS stack works).
+# Using `-c http.sslBackend=openssl` works (verified), and PowerShell/curl HTTPS
+# is also blocked, so the repository is created through the GitHub REST API by
+# Node.js (whose TLS stack works).
 #
 # Usage:
-#   .\scripts\push.ps1 -Owner Huangjw-Math -Repo conjecture-a1-proof
-#   (you will be prompted for the token; it is never echoed nor written to disk)
+#   powershell -NoProfile -ExecutionPolicy Bypass -File "<repo>/scripts/push.ps1"
+#   ./scripts/push.ps1 -Owner Huangjw-Math -Repo conjecture-a1-proof
+#   ./scripts/push.ps1 -Token ghp_xxx          # non-interactive
+#
+# The token is used only on the single `git push` command line; it is never
+# written to .git/config.
 
 param(
   [string]$Owner = "Huangjw-Math",
@@ -24,33 +28,51 @@ param(
 
 $ErrorActionPreference = "Stop"
 $here = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)   # repo root
+if (-not (Test-Path (Join-Path $here "README.md"))) { $here = (Get-Location).Path }
 Set-Location $here
+Write-Host "repository root: $here"
 
+# ---- git invocation -------------------------------------------------------------
+# IMPORTANT: build the `-c` options as an ARRAY and apply them with splatting.
+# `& $array ...` would treat the whole array as one command name and fail with
+#   " "git -c http.sslBackend=openssl ..."  cmdlet ..."
 $CA = "C:/Program Files/Git/mingw64/etc/ssl/certs/ca-bundle.crt"
-# - schannel is broken in this environment -> force the openssl backend
-# - credential.helper is cleared so that Git Credential Manager is never invoked
-#   (it would try to open a GUI / named pipe and can fail with "signal pipe" errors)
-$GIT = @("git", "-c", "http.sslBackend=openssl", "-c", "http.sslCAInfo=$CA",
-         "-c", "credential.helper=")
+$gitOpts = @()
+if (Test-Path $CA) {
+  $gitOpts += @("-c", "http.sslBackend=openssl", "-c", "http.sslCAInfo=$CA")
+} else {
+  $alt = "C:/Program Files/Git/mingw64/ssl/certs/ca-bundle.crt"
+  if (Test-Path $alt) { $gitOpts += @("-c", "http.sslBackend=openssl", "-c", "http.sslCAInfo=$alt") }
+}
+$gitOpts += @("-c", "credential.helper=")        # never invoke Git Credential Manager
 $env:GIT_TERMINAL_PROMPT = "0"
 $env:GCM_INTERACTIVE = "never"
 
+function Invoke-Git {
+  & git @gitOpts @args
+  return $LASTEXITCODE
+}
+
+if ((Invoke-Git --version) -ne 0) { throw "git not found in PATH" }
+
+# ---- locate node (for the GitHub REST API call) ----
 $node = (Get-Command node -ErrorAction SilentlyContinue).Source
 if (-not $node) {
   $cand = "C:\Users\$env:USERNAME\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\node\bin\node.exe"
   if (Test-Path $cand) { $node = $cand } else { throw "node.exe not found (needed for the GitHub API call)" }
 }
 
+# ---- token ----
 $tok = $Token
 if ([string]::IsNullOrWhiteSpace($tok)) { $tok = $env:GITHUB_TOKEN }
 if ([string]::IsNullOrWhiteSpace($tok)) { $tok = $env:GH_TOKEN }
 
 if ([string]::IsNullOrWhiteSpace($tok)) {
   Write-Host ""
-  Write-Host "需要一枚 GitHub Personal Access Token（classic，勾选 repo 权限）。" -ForegroundColor Cyan
-  Write-Host "  没有的话： https://github.com/settings/tokens  ->  Generate new token (classic)" -ForegroundColor Cyan
-  Write-Host "            勾选 [repo]，生成后复制 ghp_ 开头的字符串（只显示一次）。" -ForegroundColor Cyan
-  Write-Host "  下面提示符处：直接 Ctrl+V 粘贴，然后回车。屏幕不会显示任何字符，这是正常的。" -ForegroundColor Cyan
+  Write-Host "A GitHub Personal Access Token (classic, scope 'repo') is required." -ForegroundColor Cyan
+  Write-Host "  Create one: https://github.com/settings/tokens -> Generate new token (classic)" -ForegroundColor Cyan
+  Write-Host "  Tick [repo], generate, copy the ghp_... string (shown only once)." -ForegroundColor Cyan
+  Write-Host "  At the prompt: Ctrl+V to paste, then Enter. Nothing is echoed - that is normal." -ForegroundColor Cyan
   Write-Host ""
   $sec = Read-Host -Prompt "  Paste PAT for $Owner here and press Enter" -AsSecureString
   $tok = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
@@ -93,21 +115,28 @@ req.write(body); req.end();
 
 $privArg = if ($Private) { "true" } else { "false" }
 & $node $api $tok $Owner $Repo $Description $privArg
-if ($LASTEXITCODE -ne 0) { throw "repository creation failed" }
+if ($LASTEXITCODE -ne 0) { throw "repository creation failed (token needs the 'repo' scope)" }
 
-# ---- 2. make sure we are on `main` and have a commit ----
-& $GIT branch -M main 2>$null
-& $GIT remote remove origin 2>$null
-& $GIT remote add origin "https://github.com/$Owner/$Repo.git"
+# ---- 2. branch name / remote ----
+Invoke-Git branch -M main | Out-Null
+Invoke-Git remote remove origin | Out-Null      # may fail if absent; ignore
+Invoke-Git remote add origin "https://github.com/$Owner/$Repo.git" | Out-Null
 
-# ---- 3. push (token only in this one command line, never stored) ----
-& $GIT push "https://$tok@github.com/$Owner/$Repo.git" main
-if ($LASTEXITCODE -ne 0) { throw "push failed" }
+# ---- 3. push (token only on this one command line, never stored) ----
+Write-Host "pushing to https://github.com/$Owner/$Repo ..."
+$rc = Invoke-Git push "https://$tok@github.com/$Owner/$Repo.git" main
+if ($rc -ne 0) {
+  Write-Host ""
+  Write-Host "push failed (exit $rc)." -ForegroundColor Red
+  Write-Host "  401/403 -> token wrong/expired or missing 'repo' scope" -ForegroundColor Yellow
+  Write-Host "  'Repository not found' -> run:  git remote -v   and check Owner/Repo" -ForegroundColor Yellow
+  throw "push failed"
+}
 
 # ---- 4. keep a token-free remote ----
-& $GIT remote set-url origin "https://github.com/$Owner/$Repo.git"
-& $GIT remote -v
-
+Invoke-Git remote set-url origin "https://github.com/$Owner/$Repo.git" | Out-Null
+Write-Host ""
+Invoke-Git remote -v
 Write-Host ""
 Write-Host "done: https://github.com/$Owner/$Repo"
 Write-Host "NOTE: the token was used only on the command line; it is not written to .git/config."

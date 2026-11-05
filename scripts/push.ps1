@@ -1,4 +1,4 @@
-# push.ps1 — create the GitHub repository (if absent) and push.
+﻿# push.ps1 — create the GitHub repository (if absent) and push.
 #
 # Requires a GitHub Personal Access Token (PAT) for the account Huangjw-Math
 # with the `repo` scope:  https://github.com/settings/tokens
@@ -18,6 +18,7 @@ param(
   [string]$Owner = "Huangjw-Math",
   [string]$Repo  = "conjecture-a1-proof",
   [string]$Description = "A proof of Conjecture A.1 (Liu-Wu-Zhang-Zhou, CMP 375 (2020)): sharpness analysis, exact verification scripts, partial Lean 4 formalisation.",
+  [string]$Token = "",          # optional: pass the PAT directly instead of being prompted
   [switch]$Private
 )
 
@@ -40,10 +41,30 @@ if (-not $node) {
   if (Test-Path $cand) { $node = $cand } else { throw "node.exe not found (needed for the GitHub API call)" }
 }
 
-$sec = Read-Host -Prompt "GitHub PAT for $Owner (input hidden)" -AsSecureString
-$tok = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
-         [Runtime.InteropServices.Marshal]::SecureStringToBSTR($sec))
+$tok = $Token
+if ([string]::IsNullOrWhiteSpace($tok)) { $tok = $env:GITHUB_TOKEN }
+if ([string]::IsNullOrWhiteSpace($tok)) { $tok = $env:GH_TOKEN }
+
+if ([string]::IsNullOrWhiteSpace($tok)) {
+  Write-Host ""
+  Write-Host "需要一枚 GitHub Personal Access Token（classic，勾选 repo 权限）。" -ForegroundColor Cyan
+  Write-Host "  没有的话： https://github.com/settings/tokens  ->  Generate new token (classic)" -ForegroundColor Cyan
+  Write-Host "            勾选 [repo]，生成后复制 ghp_ 开头的字符串（只显示一次）。" -ForegroundColor Cyan
+  Write-Host "  下面提示符处：直接 Ctrl+V 粘贴，然后回车。屏幕不会显示任何字符，这是正常的。" -ForegroundColor Cyan
+  Write-Host ""
+  $sec = Read-Host -Prompt "  Paste PAT for $Owner here and press Enter" -AsSecureString
+  $tok = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
+           [Runtime.InteropServices.Marshal]::SecureStringToBSTR($sec))
+}
+
+# tolerate trailing newlines / spaces / accidental quotes from copy-paste
+$tok = $tok.Trim().Trim('"').Trim("'")
 if ([string]::IsNullOrWhiteSpace($tok)) { throw "empty token" }
+if ($tok -notmatch '^(ghp_|github_pat_|gho_)') {
+  Write-Warning "token does not start with ghp_ / github_pat_ ; continuing anyway."
+}
+Write-Host ("token accepted: {0}...{1} (length {2})" -f $tok.Substring(0,[Math]::Min(4,$tok.Length)),
+            $tok.Substring($tok.Length-4), $tok.Length)
 
 # ---- 1. create the repository if it does not exist (Node, JSON POST) ----
 $api = Join-Path $env:TEMP "gh_create_repo.js"

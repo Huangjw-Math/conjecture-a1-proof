@@ -1,4 +1,4 @@
-# push.ps1 - create the GitHub repository (if absent) and push.
+﻿# push.ps1 - create the GitHub repository (if absent) and push.
 #
 # Requires a GitHub Personal Access Token (PAT) for the account Huangjw-Math
 # with the 'repo' scope:  https://github.com/settings/tokens
@@ -67,9 +67,18 @@ $env:GCM_INTERACTIVE = "never"
 # and returns only the exit code as an int.  Diagnostics go to the host.
 function Invoke-Git {
   param([Parameter(ValueFromRemainingArguments = $true)] $GitArgs)
-  $out = & $gitExe @gitOpts @GitArgs 2>&1
-  $code = $LASTEXITCODE
-  if ($code -ne 0 -and $out) { $out | ForEach-Object { Write-Host ("  " + $_) } }
+  # git writes progress/summary lines ("To https://...", counting objects, ...)
+  # to STDERR.  With $ErrorActionPreference = 'Stop' PowerShell would turn those
+  # into terminating errors, so relax it for the duration of the native call.
+  $eap = $ErrorActionPreference
+  $ErrorActionPreference = 'Continue'
+  try {
+    $out = & $gitExe @gitOpts @GitArgs 2>&1
+    $code = $LASTEXITCODE
+  } finally {
+    $ErrorActionPreference = $eap
+  }
+  if ($out) { $out | ForEach-Object { Write-Host ("  " + $_) } }
   return [int]$code
 }
 

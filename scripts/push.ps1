@@ -26,7 +26,13 @@ $here = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)   #
 Set-Location $here
 
 $CA = "C:/Program Files/Git/mingw64/etc/ssl/certs/ca-bundle.crt"
-$GIT = @("git", "-c", "http.sslBackend=openssl", "-c", "http.sslCAInfo=$CA")
+# - schannel is broken in this environment -> force the openssl backend
+# - credential.helper is cleared so that Git Credential Manager is never invoked
+#   (it would try to open a GUI / named pipe and can fail with "signal pipe" errors)
+$GIT = @("git", "-c", "http.sslBackend=openssl", "-c", "http.sslCAInfo=$CA",
+         "-c", "credential.helper=")
+$env:GIT_TERMINAL_PROMPT = "0"
+$env:GCM_INTERACTIVE = "never"
 
 $node = (Get-Command node -ErrorAction SilentlyContinue).Source
 if (-not $node) {

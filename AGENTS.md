@@ -49,9 +49,13 @@ PDFs are unchanged in this continuation; their existing same-input checks remain
 valid. General tensor sharpness is not formalized and is not a root dependency.
 
 The user requires a complete original root proof before any draft PR submission.
-Do not submit another partial-result PR. The previous GitHub integration returned
-HTTP 403; repository/PR connection permission is a publication dependency, separate
-from the completed mathematics. No credential workaround or merge is authorized.
+That gate was satisfied before submission. Draft PR #1 is now open at
+https://github.com/Huangjw-Math/conjecture-a1-proof/pull/1, from
+xsoc1:audit/a1-clean-2026-11-05 into upstream main. The user explicitly authorized
+the browser-account route and completed the final webpage submission after browser
+automation stopped. A connector read verified draft=true, state=open and merged=false.
+The earlier GitHub App 403 no longer blocks this delivery. Do not create a duplicate
+PR, retrieve credentials, expand repository permissions or merge without authorization.
 
 Current theorem/build details are in formalization/PROGRESS.md and
 `docs/full-formalization-2026-11-06/`. Earlier 2026-11-05 partial reviews apply to
@@ -184,3 +188,59 @@ their recorded snapshots, not to the new full-root completion status.
   created and no alternate credential route was used. The connection owner must
   restore the upstream repository/PR permission; then the coordinator can retry
   this same draft action with the already completed full proof. No merge is authorized.
+
+## Draft-creation diagnosis — 2026-11-06
+
+- User asked to investigate the repeated 403 rather than merely repeat the request.
+  The connector authenticates as xsoc1. Its visible installation/account inventory
+  contains only xsoc1, with repository_selection=all; the fork is present in that
+  installation. This does not grant installation access to another user's upstream.
+- The upstream is public, unarchived and user-owned. The fork's actual parent and
+  source both resolve to Huangjw-Math/conjecture-a1-proof. GitHub successfully
+  compared main with xsoc1:audit/a1-clean-2026-11-05: ahead by four commits, behind
+  by zero, with the expected upstream merge base. Base/head availability and the
+  fork relationship are not the observed failure.
+- A single-variable retry through the same connector omitted the unnecessary
+  head_repo field, retaining the prepared full-proof title/body and draft=true.
+  It still returned 403 Resource not accessible by integration; no PR was created.
+  This optional parameter therefore does not explain the permission rejection.
+- GitHub's REST troubleshooting documentation identifies this error as insufficient
+  token permissions; its create-PR endpoint requires Pull requests (write). The
+  leading concrete cause is missing effective upstream access for the GitHub App.
+  User-level admin access to the fork and public metadata reads are not evidence
+  that the connector has upstream PR-write permission.
+- Initial permission-level inspection was blocked by security-key reauthentication.
+  The user then supplied the Permissions screenshot. A subsequent read-only live
+  inspection confirmed ChatGPT Codex Connector by openai, installed under xsoc1,
+  with read/write access including pull requests and All repositories selected.
+  The same page explicitly says this covers repositories owned by the resource
+  owner and includes other public repositories read-only. Thus the earlier
+  uncertainty about this installation's PR-write permission is resolved: it is
+  granted, but that does not authorize writing PRs on the other account's upstream.
+  No authentication or permission settings were changed. The visible inventory
+  alone still does not prove the app's global installation state on the upstream
+  owner's account or expose any narrower effective connector-token selection.
+- Before the browser route was authorized, the proposed App-route recovery was
+  for the upstream owner to check that the same GitHub App covers this repository
+  and its requested PR-write permission is approved. Reconnecting only xsoc1 or
+  choosing all repositories on xsoc1 does not cover the other account. This is
+  historical diagnostic guidance, not a remaining prerequisite for the delivered PR.
+
+## Draft PR delivered — 2026-11-06
+
+- User explicitly requested using their existing GitHub webpage login instead of
+  requiring the collaborator to install an App. The coordinator filled the agreed
+  full-proof title/body, checked the base/head selection and opened the draft-type
+  menu. Browser control stopped before submission because it could not reliably
+  determine the current URL; the user completed the final draft submission and
+  supplied https://github.com/Huangjw-Math/conjecture-a1-proof/pull/1.
+- The actual PR read returned author xsoc1, state=open, draft=true, merged=false,
+  base main at f8f7235dca197933cd97ac74b6d35d64f67e693d and head
+  audit/a1-clean-2026-11-05 in xsoc1/conjecture-a1-proof at
+  61f868022c417b46caffeda38b3116c11e971de5. It contained the four expected commits
+  and 57 changed files. Its title/body matched the prepared full-original-root
+  scope, including the explicit distinction that tensor sharpness remains written.
+- The complete proof commit 75a895de210d3ca4ad9c3f534b21be6608304f6b is included.
+  This delivery update changes only project records; the already validated Lean,
+  Python, TeX and PDF inputs are unchanged and their valid checks are reused.
+  No repository/App permission expansion or merge was performed.

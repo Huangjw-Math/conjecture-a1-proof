@@ -77,12 +77,17 @@ Mathlib fabf563a7c95a166b8d7b6efca11c8b4dc9d911f 及八个锁定传递依赖。
 精确回归证据继续适用。旧的不同 legacy proposition 保留作兼容，根证明不调用它。
 旧分支和原始本地文件未重写；新公开内容不带机器路径、进程/会话标识或原始运行日志。
 
-## 发布结果与唯一交付阻碍
+## 发布结果
 
 完整证明提交 `75a895de210d3ca4ad9c3f534b21be6608304f6b` 已正常推送到
 `xsoc1/conjecture-a1-proof` 的 `audit/a1-clean-2026-11-05` 分支，未重写旧分支。
 
-遵守用户“完整形式化后再 PR”的要求，完成上述验收后重新通过原 GitHub 集成创建 draft PR，
-仍返回 **HTTP 403：Resource not accessible by integration**。该调用没有创建 PR。
-证明本身已经完整；剩余的是发布权限：连接所有者修复上游仓库的 PR 权限后，由本任务继续
-创建同一 draft PR。没有绕用其他凭据，没有合并。
+遵守用户“完整形式化后再 PR”的要求，在上述验收完成后提交了
+[draft PR #1](https://github.com/Huangjw-Math/conjecture-a1-proof/pull/1)。
+已核验作者为 `xsoc1`，目标是 `Huangjw-Math/conjecture-a1-proof:main`，来源是上述干净分支；
+状态为 **Open、Draft、未合并**。PR 正文准确区分完整主定理形式化与书面最优性结果。
+
+此前 GitHub App 创建途径返回 HTTP 403；用户随后明确授权使用自己的现有网页登录。
+本任务填写了表单，用户完成最终 draft 提交并提供链接，随后由连接只读核验实际结果。
+无需合作者额外安装 App，未扩大仓库权限。发布阻碍已解除；本次仅更新交付记录，
+既有数学源码、验证脚本及 PDF 的有效验收结果继续适用。

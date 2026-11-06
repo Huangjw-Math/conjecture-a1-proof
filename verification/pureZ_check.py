@@ -36,5 +36,8 @@ for (p, q) in [(1,1),(2,1),(2,2),(3,2),(3,3),(4,3),(4,4),(5,4)]:
     elem = mul(a, pw(X, p + 1))
     c = elem.get((0, 0, p + q), F(0))
     pred = F((-1) ** (p + 1) * factorial(p + 1))
+    assert c == pred, (p, q, c, pred)
     print("  p=%d q=%d : coeff of Z^(p+q) = %s   predicted (-1)^(p+1)(p+1)! = %s   match=%s"
           % (p, q, c, pred, c == pred))
+
+print("PASS: 8 pure-Z coefficient identities in A, not quotient nonmembership")

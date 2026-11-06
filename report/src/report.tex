@@ -2,7 +2,7 @@
 \documentclass[11pt,UTF8]{ctexart}
 
 \usepackage[a4paper,margin=2.5cm]{geometry}
-\usepackage{amsmath,amssymb,amsthm,mathrsfs}
+\usepackage{amsmath,amssymb,amsthm}
 \usepackage{booktabs}
 \usepackage{enumitem}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
@@ -60,8 +60,8 @@ $2p+2q+1$ 的自然性与最优性；
 线性代数论断（一个三角形子式、一条少项式重数引理）证明所有解为零。
 作为副产品我们得到：$A$ 的每个次数 $\ge 2p+2q+1$ 的单项式都落在 $I$ 中，
 即商模 $A/I$ 是有限维的。原文的引理 A.3、A.4 是我们的定理的特例。
-文中所用的全部技巧汇总为技术文档，作为附录 A（附注）给出；所有中间结论都经过
-精确有理数算术的计算机核验，但\textbf{数值核验不作为证明}。
+文中所用技巧汇总为附录 A（附注）；对第 \ref{sec:numerics} 节列出的有限参数范围作精确有理数一致性检查，
+一般结论由符号证明给出。
 
 \medskip
 \noindent\textbf{关键词：} Heisenberg 代数；左理想；广义二项式定理；Kac--Moody 代数；
@@ -100,9 +100,9 @@ X^{p+1}(v)=0,\qquad Y^{q+1}(v)=0 ,
 \[
 [X,Y]=XY-YX,\qquad\text{等价地}\qquad YX=XY-[X,Y].
 \]
-（注意 $YX=[X,Y]-XY$ 与 $YX=XY-[X,Y]$ 相差一个符号；若把 $Z$ 换成 $-Z$、$Y$ 换成 $-Y$，
-两种约定互相等价，而本文的全部结论都只依赖于“$Z$ 与 $X,Y$ 交换、且 $Z=XY-YX$”这一结构，
-与 $Z$ 的整体符号无关。）在此约定下 $[X^n,Y]=nX^{n-1}Z$，这正是文~[1] 引理 A.3 所用的恒等式。
+注意 $YX=Z-XY$ 等价于 $XY+YX=Z$，是反交换子关系，并非上述交换子约定的另一种写法。
+若改用 $[Y,X]=-Z$，必须同时修改所有涉及交换子的公式。本文固定 $Z=XY-YX$；
+在此约定下有 $[X^n,Y]=nX^{n-1}Z$，与文~[1] 引理 A.3 一致。
 \end{remark}
 
 \subsection{本文的主要结果}
@@ -132,17 +132,14 @@ $I=AX^{p+1}+AY^{q+1}$。以 $A$ 的 PBW 基 $\{X^aY^bZ^k\}$ 记 $A=\bigoplus_d A
 \item \textbf{主证明}（第 \ref{sec:proof} 节）：把次数为 $N=2p+2q+1$ 的单项式按
 $\delta=a-b$ 分成若干“直线”，沿每条直线把关系排成一个线性方程组，
 用两个初等引理（三角形子式、少项式重数界）证明解为零。
-\item \textbf{最优性}（第 \ref{sec:sharp} 节）：指数 $2p+2q+1$ 不能改进；这由精确计算给出，
-见第 \ref{sec:numerics} 节。
+\item \textbf{最优性}（第 \ref{sec:sharp} 节）：对全部参数给出显式张量模型，证明指数 $2p+2q+1$ 不能改进；
+第 \ref{sec:numerics} 节的精确计算另作有限范围的一致性检查。
 \end{enumerate}
 
-\subsection{与文献的关系，以及检索说明}
+\subsection{与文献的关系}
 
-我们检索了 MathOverflow、Math.StackExchange 以及相关文献，\textbf{没有找到对 Conjecture A.1
-的直接处理}；与本题最接近的是一般性的工具：Poincaré--Birkhoff--Witt 定理（见 [5]）；
-仿射 Kac--Moody 代数与折叠 Cartan 矩阵的背景（见 [2,3,4]）；Weyl 代数有限维模的经典结论（见 [7]）；
-以及 Descartes 符号法则与少项式根数界（见 [6]）。本文的贡献在于给出一个自足的证明，
-并把所用技巧系统化（附录 A）。
+本文采用 PBW 定理（见 [5]）、仿射 Kac--Moody 代数与折叠 Cartan 矩阵的标准工具（见 [2,3,4]），
+并给出所需少项式重数界的自足证明。
 
 \section{化归：万能模与左理想的成员问题}\label{sec:reduce}
 
@@ -163,7 +160,7 @@ X^{a}Y^{b}Z^{k}\qquad(a,b,k\ge 0)
 $A_d$ 以 $\{X^aY^bZ^k: a+b+2k=d\}$ 为基。
 \end{definition}
 
-由于 $Z$ 是中心的，$A$ 有对合（反自同构）$\omega$：$X\mapsto X$，$Y\mapsto -Y$，$Z\mapsto -Z$；
+关系给出对合代数自同构 $\omega$（保持乘法次序）：$X\mapsto X$，$Y\mapsto -Y$，$Z\mapsto -Z$；
 它在后文只起说明作用。
 
 \subsection{万能模}
@@ -173,7 +170,7 @@ $A_d$ 以 $\{X^aY^bZ^k: a+b+2k=d\}$ 为基。
 \[
 I:=I_{p,q}:=A\,X^{p+1}+A\,Y^{q+1}\ \subseteq A ,
 \]
-它是 $A$ 的\textbf{左}理想（不是双边理想，见注 \ref{rem:two-sided}），且由齐次元生成，故是分次左理想：
+它是 $A$ 的\textbf{左}理想（一般不能视为双边理想，见注 \ref{rem:two-sided}），且由齐次元生成，故是分次左理想：
 $I=\bigoplus_d I_d$，$I_d=I\cap A_d$。记
 \[
 M:=M_{p,q}:=A/I,\qquad v_0:=1+I\in M .
@@ -219,11 +216,14 @@ Z^{K}=Z\cdot Z^{K-1}=(XY-YX)Z^{K-1}=X\cdot\bigl(YZ^{K-1}\bigr)-Y\cdot\bigl(XZ^{K
 \end{proof}
 
 \begin{corollary}\label{cor:reduce}
-Conjecture A.1 等价于下列命题：对一切 $p,q\ge0$，
+下列更强的次数消失命题足以推出 Conjecture A.1：对一切 $p,q\ge0$，
 \[
 \text{每个次数}\ \ge 2p+2q+1\ \text{的单项式}\ X^{A}Y^{B}Z^{K}\ \text{都属于}\ I=AX^{p+1}+AY^{q+1}.
 \]
 \end{corollary}
+\begin{proof}
+$(X+Y)^{2p+2q+1}$ 是该次数的齐次元，可按 PBW 基展开；上述条件与命题 \ref{prop:reduce} 即给出结论。
+\end{proof}
 
 \section{广义二项式定理（三项式公式）}\label{sec:binom}
 
@@ -249,7 +249,7 @@ Conjecture A.1 等价于下列命题：对一切 $p,q\ge0$，
 \[
 \underbrace{\frac{n!}{(A-1)!B!K!}\Bigl(-\tfrac12\Bigr)^{K}}_{(a,b,k)=(A-1,B,K)},\qquad
 \underbrace{\frac{n!}{A!(B-1)!K!}\Bigl(-\tfrac12\Bigr)^{K}}_{(a,b,k)=(A,B-1,K)},\qquad
-\underbrace{-\!A\cdot\frac{n!}{A!B!(K-1)!}\Bigl(-\tfrac12\Bigr)^{K-1}}_{(a,b,k)=(A+1,B,K-1)},
+\underbrace{-\!(A+1)\frac{n!}{(A+1)!B!(K-1)!}\Bigl(-\tfrac12\Bigr)^{K-1}}_{(a,b,k)=(A+1,B,K-1)},
 \]
 （下标越界者视为 $0$）。三项之和为
 \[
@@ -279,7 +279,7 @@ e^{t(X+Y)}=e^{-\frac{t^2}{2}Z}e^{tX}e^{tY}
 \qquad
 B_{m}:=\sum_{a+b=m}\frac{X^{a}Y^{b}}{a!\,b!}=[t^{m}]\,e^{tX}e^{tY}.
 \end{equation}
-特别地，$B_m\in\K[X,Y]$ 是 $X,Y$ 的（非交换）齐次“除幂”多项式，$\deg B_m=m$。
+特别地，$B_m$ 是由正规序单项式组成的齐次“除幂”元，$\deg B_m=m$；$X,Y$ 一般不交换。
 \end{corollary}
 
 \begin{remark}[指数 $2p+2q+1$ 的自然性]\label{rem:why}
@@ -313,13 +313,16 @@ Y^{B}X^{n}=\sum_{j=0}^{\min(B,n)}(-1)^{j}\,\frac{B!}{(B-j)!}\binom{n}{j}\,X^{n-j
 $YX^{n}=X^{n}Y-nX^{n-1}Z$，这正是 $B=1$ 的 \eqref{eq:normal}。
 设 \eqref{eq:normal} 对 $B$ 成立，则
 \[
-Y^{B+1}X^{n}=Y\sum_{j=0}^{\min(B,n)}(-1)^{j}\tfrac{B!}{(B-j)!}\tbinom{n}{j}X^{n-j}Y^{B-j}Z^{j}
-=\sum_{j}(-1)^{j}\tfrac{B!}{(B-j)!}\tbinom{n}{j}
+\begin{aligned}
+Y^{B+1}X^{n}
+&=Y\sum_{j=0}^{\min(B,n)}(-1)^{j}\tfrac{B!}{(B-j)!}\tbinom{n}{j}X^{n-j}Y^{B-j}Z^{j}\\
+&=\sum_{j}(-1)^{j}\tfrac{B!}{(B-j)!}\tbinom{n}{j}
 \Bigl(X^{n-j}Y^{B+1-j}Z^{j}-(n-j)X^{n-j-1}Y^{B-j}Z^{j+1}\Bigr).
+\end{aligned}
 \]
 固定 $j$ 与三元组 $(n-j,\,B+1-j,\,j)$，其系数为
 \[
-(-1)^{j}\tfrac{B!}{(B-j)!}\tbinom{n}{j}+(-1)^{j-1}\tfrac{B!}{(B+1-j)!}\tbinom{n}{j-1}\bigl(n-j+1\bigr)
+(-1)^{j}\tfrac{B!}{(B-j)!}\tbinom{n}{j}+(-1)^{j}\tfrac{B!}{(B+1-j)!}\tbinom{n}{j-1}\bigl(n-j+1\bigr)
 =(-1)^{j}\tfrac{B!}{(B+1-j)!}\Bigl[(B+1-j)\tbinom{n}{j}+(n-j+1)\tbinom{n}{j-1}\Bigr].
 \]
 方括号内 $=(B+1)\tbinom{n}{j}$（直接通分：$\frac{B+1-j}{j!}+\frac{1}{(j-1)!}=\frac{B+1}{j!}$ 乘以
@@ -360,7 +363,7 @@ $X^{A}Y^{B}Z^{K}=Z^{K}\cdot\bigl(X^{A}Y^{B-q-1}\bigr)\cdot Y^{q+1}\in A\,Y^{q+1}
 $I=AX^{p+1}+AY^{q+1}$ 只是\textbf{左}理想，因此 $X^{p+1}$ 只“从右端”吸收左侧的因子；
 右乘会破坏成员性。这一点是本题的真正难点。例如取 $p=q=1$，则 $X^{2}Y\notin I$：
 在 PBW 基 $\{X^3,X^2Y,XY^2,Y^3,XZ,YZ\}$ 下
-$A_2X^2+A_2Y^2=\operatorname{span}\{X^3,\;X^2Y-2XZ,\;XY^2,\;Y^3\}$，
+$I_3=A_1X^2+A_1Y^2=\operatorname{span}\{X^3,\;X^2Y-2XZ,\;XY^2,\;Y^3\}$，
 而 $X^2Y=(X^2Y-2XZ)+2XZ$，其中 $XZ$ 不在该子空间内，故 $X^2Y\notin I$。
 
 于是“在双边商代数 $A/(AX^{p+1}A+AY^{q+1}A)$ 中 $x^{p+1}=y^{q+1}=0$”这类
@@ -369,7 +372,7 @@ $A_2X^2+A_2Y^2=\operatorname{span}\{X^3,\;X^2Y-2XZ,\;XY^2,\;Y^3\}$，
 \end{remark}
 
 \begin{proposition}[双边版本，作为技术练习]\label{prop:twosided}
-设 $R$ 是特征零的结合代数，$x,y\in R$，$z:=xy-yx$ 中心，且 $x^{p+1}=y^{q+1}=0$（作为元素）。
+设 $\K$ 是特征零域，$R$ 是结合 $\K$-代数，$x,y\in R$，$z:=xy-yx$ 中心，且 $x^{p+1}=y^{q+1}=0$（作为元素）。
 则 $(x+y)^{2p+2q+1}=0$ 在 $R$ 中成立。
 \end{proposition}
 
@@ -377,8 +380,8 @@ $A_2X^2+A_2Y^2=\operatorname{span}\{X^3,\;X^2Y-2XZ,\;XY^2,\;Y^3\}$，
 由 $x^{p+1}=0$ 与交换子展开 $x^{n}y=\sum_j\binom{n}{j}(\ad_x^{j}y)x^{n-j}$，
 并对 $m$ 用 $x^{p+1}y^{m}=0$ 得
 $\sum_{j=1}^{\min(p+1,m)}\binom{p+1}{j}\frac{m!}{(m-j)!}y^{m-j}z^{j}x^{p+1-j}=0$。
-对 $J=1,\dots,p+1$ 取 $m=J$ 并作降 $J$ 归纳（$j<J$ 的项已被归纳假设消去），
-得 $z^{J}x^{p+1-J}=0$；同理 $z^{J}y^{q+1-J}=0$（$J=1,\dots,q+1$）。
+依次对 $J=1,\dots,p+1$ 取 $m=J$ 并递增归纳（$j<J$ 的项已被归纳假设消去），
+得 $\binom{p+1}{J}J!\,z^{J}x^{p+1-J}=0$。该正整数系数在 $\K$ 中可逆，故 $z^{J}x^{p+1-J}=0$；同理 $z^{J}y^{q+1-J}=0$（$J=1,\dots,q+1$）。
 于是对 $a\le p$，$k+a\ge p+1$ 时 $z^{k}x^{a}=z^{k-(p+1-a)}\bigl(z^{p+1-a}x^{a}\bigr)=0$。
 把定理 \ref{thm:trinomial} 的 \eqref{eq:tri} 代入（$N=2p+2q+1$）：
 $a\ge p+1$ 或 $b\ge q+1$ 的项为零；其余各项满足 $a\le p,b\le q$，
@@ -481,16 +484,16 @@ $e_1<\cdots<e_k$，$c_i\ne0$）。则对任意 $c\in\K^{\times}$，$c$ 作为 $f
 \end{lemma}
 
 \begin{proof}
-平移/伸缩可设 $c=1$。若重数 $\ge k$，则 $f(1)=f'(1)=\cdots=f^{(k-1)}(1)=0$，即
+用 $g(t)=f(ct)$ 伸缩可设 $c=1$；此变换保持非零项数和根的重数。若重数 $\ge k$，则 $f(1)=f'(1)=\cdots=f^{(k-1)}(1)=0$，即
 $\sum_{i=1}^{k}c_i\,(e_i)_j=0$（$j=0,\dots,k-1$），其中 $(e)_j=e(e-1)\cdots(e-j+1)$。
 矩阵 $\bigl((e_i)_j\bigr)_{0\le j\le k-1,\,1\le i\le k}$ 的第 $j$ 行是关于 $e$ 的首一 $j$ 次多项式
-在 $e=e_i$ 处的取值，故它由 Vandermonde 矩阵 $(e_i^{\,j})$ 经单位上三角行变换得到，
+在 $e=e_i$ 处的取值，故它由 Vandermonde 矩阵 $(e_i^{\,j})$ 经单位下三角行变换得到，
 行列式 $\prod_{i<i'}(e_{i'}-e_i)\ne0$。于是 $c_i=0$ 与 $f\ne0$ 矛盾。
 \end{proof}
 
 \begin{lemma}[少项式论证]\label{lem:gf}
-设 $W$ 是 $\K$-向量空间，$(u_b)_{b\in\Z}\subseteq W$ 满足 $u_b=0$（$b<0$ 或 $b>D$）。
-设 $p\ge0$，且存在 $0\le b_0\le M$ 使得
+设 $\K$ 特征为零，$W$ 是 $\K$-向量空间，$(u_b)_{b\in\Z}\subseteq W$ 满足 $u_b=0$（$b<0$ 或 $b>D$）。
+设 $p,D,M,b_0$ 均为非负整数，$0\le b_0\le M$，并约定下式中 $j>b$ 的系数为零，使得
 \[
 r_b:=\sum_{j=0}^{p+1}(-1)^j\frac{b!}{(b-j)!}\binom{p+1}{j}u_{b-j}=0
 \qquad\text{对一切}\ b\in[b_0,M].
@@ -507,20 +510,22 @@ b_0+\max\bigl(0,\;D+p+1-M\bigr)\le p+1,
 $H(t):=(1-t)^{p+1}U(t)$。直接计算给出
 \[
 H(t)=\sum_{b\ge0}\frac{r_b}{b!}\,t^{b},\qquad
-r_b=\sum_j(-1)^{j}\binom{p+1}{j}\frac{b!}{(b-j)!}u_{b-j},
+r_b=\sum_{j=0}^{\min(b,p+1)}(-1)^{j}\binom{p+1}{j}\frac{b!}{(b-j)!}u_{b-j},
 \]
-即 $H$ 的 $t^b$ 系数（除以 $b!$）为 $r_b$。于是由假设与 $u_b=0$（$b>D$）知 $H$ 的系数仅在
+即 $H$ 的 $t^b$ 系数乘以 $b!$ 为 $r_b$。于是由假设与 $u_b=0$（$b>D$）知 $H$ 的系数仅在
 \[
 b\in[0,b_0-1]\ \cup\ [M+1,\,D+p+1]
 \]
 中可能非零；故 $H$ 非零系数的个数至多 \eqref{eq:count} 的左端，记为 $\kappa$，且
 $\kappa\le p+1$。
 
-若 $H\ne0$：取 $b_*$ 与线性泛函 $\lambda:W\to\K$ 使 $\lambda(u_{b_*})\ne0$，则
-$\lambda\circ H\ne0$ 是 $\K[t]$ 中的非零多项式，非零系数个数 $\le\kappa$，
+若 $H\ne0$，则 $U\ne0$。在有限维空间 $\operatorname{span}\{u_0,\dots,u_D\}$ 上按基取线性泛函
+$\lambda$ 使某个 $\lambda(u_{b_*})\ne0$。于是 $\lambda(U)\ne0$，且
+$\lambda(H)=(1-t)^{p+1}\lambda(U)\ne0$ 是 $\K[t]$ 中的非零多项式，非零系数个数 $\le\kappa$，
 且由 $H=(1-t)^{p+1}U$ 知 $t=1$ 是它的重数 $\ge p+1$ 的根。
 由引理 \ref{lem:fewnomial} 得 $p+1\le\kappa-1\le p$，矛盾。故 $H=0$，
-于是 $U=0$（$\K[t]$ 是整环），即所有 $u_b=0$。
+再由 $(1-t)^{p+1}$ 的常数项为 $1$，比较最低的非零向量系数可知 $U=0$，即所有 $u_b=0$。
+此处是模值多项式的消去，不能直接把 $U$ 当作整环 $\K[t]$ 的元素。
 \end{proof}
 
 \begin{lemma}[$1\le\delta\le p$ 的情形]\label{lem:middle}
@@ -530,7 +535,8 @@ $\lambda\circ H\ne0$ 是 $\K[t]$ 中的非零多项式，非零系数个数 $\le
 \begin{proof}
 此时 $b_0=p+1-\delta\ge1$，$b_{\min}=0$。又
 $M=p+q+\frac{1-\delta}{2}\ge q$（因为 $p\ge\delta\ge1$ 给出 $p-\frac{\delta-1}{2}\ge0$），故 $D=q$。
-由 \eqref{eq:known-zero} 得 $u_b=0$（$b>q=D$）。把引理 \ref{lem:gf} 应用于 $(u_b)$：条件
+由 \eqref{eq:known-zero} 得 $u_b=0$（$b>q=D$）。又 $M-b_0=q+(\delta-1)/2\ge0$，
+故 $0\le b_0\le M$。把引理 \ref{lem:gf} 应用于 $(u_b)$：条件
 \eqref{eq:count} 的左端等于
 \[
 (p+1-\delta)+\bigl(q+p+1-M\bigr)=(p+1-\delta)+\frac{1+\delta}{2}
@@ -594,7 +600,8 @@ A_{ij}=b_i\sum_{k\in\langle i\rangle}a_{kj}.
 （引理 A.1），以及 $b_i=1$ 时的 Serre 关系（引理 A.2）。剩下降 $b_i=2$。
 
 \begin{proposition}[降 $b_i=2$ 的 Serre 关系]\label{prop:serre}
-设 $b_i=2$，即 $\langle i\rangle=\{i,\sbar(i)\}$、$a_{i\sbar(i)}=a_{\sbar(i)i}=-1$，并记
+在文~[1] 的仿射及 linking 条件下，设 $b_i=2$，并取 $j\notin\langle i\rangle$。
+原文的分类给出 $\langle i\rangle=\{i,\sbar(i)\}$、$a_{i\sbar(i)}=a_{\sbar(i)i}=-1$，并记
 \[
 X=\ad e_i,\quad Y=\ad e_{\sbar(i)},\quad Z=[X,Y],\qquad v=e_j,\quad p=-a_{ij},\ q=-a_{\sbar(i)j}.
 \]
@@ -614,36 +621,72 @@ $Y^{q+1}v=\ad_{e_{\sbar i}}^{1-a_{\sbar i j}}e_j=0$ 是 $\g$ 的 Serre 关系。
 \]
 由 $A_{ij}=b_i(a_{ij}+a_{\sbar i j})=2(-p-q)$（注意 $b_i=2$）得
 $1-A_{ij}=1+2(p+q)$，而 $2p+2q+1=2(p+q)+1$，两者一致。故
-$\ad_{E_i}^{1-A_{ij}}E_j=0$。同理（用对合 $e\leftrightarrow f$）得 $\ad_{F_i}^{1-A_{ij}}F_j=0$。
+对 $e_j$ 的结论与所需指数一致。由于 $\sigma(E_i)=E_i$，对该等式作用 $\sigma^r$，得到轨道中每个
+$k=\bar\sigma^r(j)$ 都满足 $\ad_{E_i}^{1-A_{ij}}e_k=0$。对不同轨道元素求和，才得
+$\ad_{E_i}^{1-A_{ij}}E_j=0$。同理（用对合 $e\leftrightarrow f$，并计入 $F_i$ 的标量因子）
+得 $\ad_{F_i}^{1-A_{ij}}F_j=0$。
 \end{proof}
 
 \begin{remark}
-定理 \ref{thm:main} 对任意 $p,q\ge0$ 成立，因此不再需要文~[1] 中“在满足 linking 条件的
-情形下 $p,q\in\{0,1\}$，故只需引理 A.2、A.3”这一逐情形讨论；对所有仿射情形
-（包括 $|A_{ij}|\le4$ 带来的 $p,q\le2$ 等）都自动成立。原文对“$|\delta|$ 大”的直线
-所需的估计，正是本文引理 \ref{lem:triangular} 与 \ref{lem:negative} 处理的部分。
+定理 \ref{thm:main} 对任意 $p,q\ge0$ 成立，统一覆盖文~[1] 在仿射且满足 linking 条件时
+列出的 $p=0$ 或 $q=0$ 或 $p=q=1$ 三类情形（原文引理 A.3、A.4）。这并不表示 $p,q$ 都属于 $\{0,1\}$。对所有仿射情形
+（包括 $|A_{ij}|\le4$ 带来的 $p,q\le2$ 等）都自动成立。本文的直线参数 $\delta$
+与三角系统是本报告证明所用的工具，并非原文附录 A 的步骤。
 \end{remark}
 
 \section{最优性}\label{sec:sharp}
 
-\begin{proposition}[指数的不可改进性；精确核验]\label{prop:sharp}
-对一切 $0\le p,q\le6$，在 $M_{p,q}$ 中有
-\[
-(X+Y)^{n}v_0\ne0\quad(n<2p+2q+1),\qquad
-(X+Y)^{2p+2q+1}v_0=0 ,
-\]
-即 $N=2p+2q+1$ 在万能模中是\textbf{精确的}幂零指数。此外 $Z^{p+q+1}$ 是 $Z$ 在 $M_{p,q}$ 中的
-精确幂零指数。
-\end{proposition}
+\begin{theorem}[所有参数下的精确指数]\label{prop:sharp}
+对任意 $p,q\ge0$，在全部满足 Conjecture A.1 假设的模中，一致幂零指数恰为
+$N=2p+2q+1$。在万能模 $M_{p,q}$ 中，$X+Y$ 在 $v_0$ 上的精确指数为 $N$，
+$Z$ 的精确幂零指数为 $p+q+1$。
+\end{theorem}
 
-\begin{proof}[说明]
-这不是证明，而是第 \ref{sec:numerics} 节的精确有理数计算的结论（$p,q\le6$，共 49 组）。
-它与定理 \ref{thm:main} 一起表明：本文给出的指数在最一般的 $(V,v)$ 意义下不能被改进。
-（若只要求对原文出现的仿射情形成立，则因 $p,q\in\{0,1\}$，可以取得更小的指数；
-这正是原文只处理 $p=q=1$ 的原因。）
+\begin{proof}
+上界由定理 \ref{thm:main} 给出。下面对任意参数构造下界，而非从有限计算外推。
+令 $W=\K^3$，列向量标准基为 $e_1,e_2,e_3$，对偶基为 $\varepsilon_1,\varepsilon_2,\varepsilon_3$。
+在 $W$ 上取矩阵单位 $x=E_{12}$、$y=E_{23}$、$z=E_{13}$，则
+$[x,y]=z$ 且 $[x,z]=[y,z]=0$。在 $W^*$ 上用对偶李代数作用 $D(a)=-a^{\mathsf T}$，
+因 $[D(a),D(b)]=D([a,b])$，同样满足这些关系。
+
+在
+\[
+V=(W^*)^{\otimes p}\otimes W^{\otimes q},\qquad
+v=\varepsilon_1^{\otimes p}\otimes e_3^{\otimes q},\qquad m=p+q
+\]
+上对每个生成元采用对角作用，即将它在各张量因子上的作用相加，记为 $X,Y,Z$。
+不同因子上的算子相互交换，故 $[X,Y]=Z$ 且 $[X,Z]=[Y,Z]=0$。
+在对偶因子上，$X\varepsilon_1=-\varepsilon_2$、$X^2\varepsilon_1=0$、$Y\varepsilon_1=0$；
+在自然因子上，$Xe_3=0$、$Ye_3=e_2$、$Y^2e_3=0$。
+多项式展开中每个非零项最多在 $p$ 个对偶因子上各使用一次 $X$，或在 $q$ 个自然因子上各使用一次 $Y$，
+所以 $X^{p+1}v=Y^{q+1}v=0$。
+
+令 $T_i$ 是 $X+Y$ 在第 $i$ 个因子上的作用，则 $T_i^3=0$，
+且 $T_i^2\varepsilon_1=\varepsilon_3$、$T_i^2e_3=e_1$。
+在 $(\sum_iT_i)^{2m}v$ 的多项式展开中，非零项的每个因子指数至多为 $2$；
+总和为 $2m$ 迫使所有指数都为 $2$。因此
+\[
+(X+Y)^{2m}v=\frac{(2m)!}{2^m}\,
+\varepsilon_3^{\otimes p}\otimes e_1^{\otimes q}\ne0.
+\]
+右端纯张量非零，系数在特征零的域中非零。同理 $(X+Y)^{2m+1}=0$ 在这个模型上成立。
+若较低的幂已杀死 $v$，则第 $2m$ 次幂也会杀死 $v$，所以指数确为 $2m+1$。
+
+每个因子的 $Z$ 平方为零，而 $Z\varepsilon_1=-\varepsilon_3$、$Ze_3=e_1$，故
+\[
+Z^m v=(-1)^p m!\,\varepsilon_3^{\otimes p}\otimes e_1^{\otimes q}\ne0.
+\]
+万能模映到本模型的循环子模，将 $v_0$ 映到 $v$，故上述非零性在万能模中也成立。
+其上界 $Z^{m+1}v_0=0$ 来自定理 \ref{thm:main}，因为次数 $2m+2\ge N$；
+中心性再给出 $Z^{m+1}(av_0)=aZ^{m+1}v_0=0$。
+当 $m=0$ 时按空张量约定取 $V=\K$、$v=1$、$X=Y=Z=0$，所有公式仍成立。
 \end{proof}
 
+有限范围 $0\le p,q\le6$ 的精确有理数核验保留在下一节，作为上述一般性证明的独立一致性检查。
+
 \section{数值核验（不作为证明）}\label{sec:numerics}
+
+本节取 $\K=\Q$，只讨论所列有限范围的有理数输入；前面的符号证明仍适用于任意特征零域。
 
 \subsection{算法}
 
@@ -723,7 +766,7 @@ $k$ & $(0,0)$ & $(1,0)$ & $(0,1)$ & $(1,1)$ & $(2,0)$ & $(2,1)$ & $(0,2)$ & $(1,
 
 \subsection{对中间结论的核验}
 
-除主结论外，我们还逐项核验了证明用到的每个中间断言（全部在 $\Q$ 上精确进行）：
+除主结论外，以下列出中间公式的一致性检查范围（全部在 $\Q$ 上精确进行）：
 
 \begin{enumerate}[label=(\arabic*)]
 \item 三项式公式 \eqref{eq:tri}：$n\le8$ 全部成立（直接展开正规序比较）。
@@ -735,8 +778,9 @@ $\delta\le-1$ 时的子式为上三角，行列式非零（例如 $(p,q,\delta)=
 $\det=1440$，$(2,3,-1)$ 时 $\det=-172800$）。
 \item 情形 (b) 的计数条件 \eqref{eq:count}：对 $p\le5$、$q\le5$、$1\le\delta\le p$ 全部满足。
 \item 平凡消失（引理 \ref{lem:triv}）与反例 $X^2Y\notin I$（注 \ref{rem:two-sided}）。
-\item $Z^{k}B_{m}\in I$ 当且仅当 $2k+m\ge 2p+2q+1$（$p,q\le4$ 的全部 $(k,m)$），
-这与推论 \ref{cor:Zdecomp} 及定理 \ref{thm:main} 完全吻合。
+\item $2k+m\ge 2p+2q+1$ 时 $Z^{k}B_m\in I$，由定理 \ref{thm:main} 可知。
+逆命题不成立：取 $p=1,q=0,k=0,m=2$，有 $N=3$，但 $B_2=X^2/2+XY+Y^2/2\in AX^2+AY$。
+此外 $p=q=1$ 时 $B_4\in I$ 也给出反例。核验程序只检查正确的充分方向。
 \end{enumerate}
 
 \subsection{关于数值核验的地位}
@@ -782,8 +826,8 @@ x^{n}y^{m}=\sum_{j=0}^{\min(n,m)}\binom{n}{j}\frac{m!}{(m-j)!}y^{m-j}z^{j}x^{n-j
 （对 $n$ 归纳，用 $\binom{n}{j}+\binom{n}{j-1}=\binom{n+1}{j}$）。
 当 $z$ 中心时 $D(z)=0$，故 $D(y^m)=my^{m-1}z$，归纳得 $D^j(y^m)=\frac{m!}{(m-j)!}y^{m-j}z^j$。
 
-\noindent\textbf{用途。}引理 \ref{lem:normal}（$x=X$，$y=Y$，$n\mapsto p+1$）与命题 \ref{prop:twosided}
-中的关系 $z^{J}x^{p+1-J}=0$ 都来自它。
+\noindent\textbf{用途。}交换 $x,y$ 后取 $n=B$、$m=p+1$，并合并阶乘系数，即得引理 \ref{lem:normal}。
+命题 \ref{prop:twosided} 中的关系 $z^{J}x^{p+1-J}=0$ 也来自上述展开。
 
 \addcontentsline{toc}{subsection}{A.3\quad 广义二项式定理}
 \subsection*{A.3\quad 广义二项式定理（三项式公式）}
@@ -819,7 +863,7 @@ $(X+Y)^N$ 属于更大的双边理想 $AX^{p+1}A+AY^{q+1}A$，推不出本题；
 \noindent\textbf{陈述。}特征零域上恰有 $k$ 个非零系数的非零多项式，在任一非零点的根重数 $\le k-1$（引理 \ref{lem:fewnomial}）。
 
 \noindent\textbf{证明。}化到 $t=1$；若重数 $\ge k$，则 $(e_i)_j$（$j=0,\dots,k-1$）组成的
-$k\times k$ 矩阵奇异，但它是 Vandermonde 矩阵经单位上三角行变换所得，行列式
+$k\times k$ 矩阵奇异，但它是 Vandermonde 矩阵经单位下三角行变换所得，行列式
 $\prod_{i<i'}(e_{i'}-e_i)\ne0$，矛盾。
 
 \noindent\textbf{用途。}引理 \ref{lem:gf}：把直线方程打包成生成函数 $U(t)=\sum u_bt^b/b!$，

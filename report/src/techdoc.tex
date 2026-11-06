@@ -2,7 +2,7 @@
 \documentclass[11pt,UTF8]{ctexart}
 
 \usepackage[a4paper,margin=2.4cm]{geometry}
-\usepackage{amsmath,amssymb,amsthm,mathrsfs}
+\usepackage{amsmath,amssymb,amsthm}
 \usepackage{booktabs}
 \usepackage{enumitem}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
@@ -104,7 +104,7 @@ $\binom{n}{j'}+\binom{n}{j'-1}=\binom{n+1}{j'}$。
 \end{proof}
 
 \begin{lemma}[中心交换子的情形]\label{lem:central}
-设 $z:=[x,y]$ 在 $R$ 中中心（即 $[z,x]=[z,y]=0$）。则 $D(z)=0$，且
+设 $z:=[x,y]$ 满足 $[z,x]=[z,y]=0$（即在 $x,y$ 生成的子代数中中心）。则 $D(z)=0$，且
 \[
 D^{j}(y^{m})=\frac{m!}{(m-j)!}\,y^{m-j}z^{j}\quad(0\le j\le m),\qquad D^{j}(y^m)=0\ (j>m).
 \]
@@ -118,10 +118,13 @@ x^{n}y^{m}=\sum_{j=0}^{\min(n,m)}\binom{n}{j}\frac{m!}{(m-j)!}\,y^{m-j}z^{j}x^{n
 $D$ 是导子，故 $D(y^m)=m y^{m-1}D(y)=my^{m-1}z$；由 $D(z)=0$ 归纳即得公式。
 \end{proof}
 
-\begin{remark}[用途]
-引理 \ref{lem:central} 在 $n=p+1$ 时给出主报告的正规序公式
-$Y^BX^{p+1}=\sum_j(-1)^j\frac{B!}{(B-j)!}\binom{p+1}{j}X^{p+1-j}Y^{B-j}Z^j$，
-它是“沿直线的线性关系”的来源。取 $[x,y]=-Z$（即交换 $x,y$）时符号相应改变。
+\begin{remark}[用途]\label{rem:normal}
+在引理 \ref{lem:central} 中取 $x=Y$、$y=X$、$n=B$、$m=p+1$，则 $[Y,X]=-Z$。
+利用 $\binom{B}{j}(p+1)_j=(B)_j\binom{p+1}{j}$，得到主报告的正规序公式
+\[
+Y^BX^{p+1}=\sum_{j=0}^{\min(B,p+1)}(-1)^j\frac{B!}{(B-j)!}\binom{p+1}{j}X^{p+1-j}Y^{B-j}Z^j.
+\]
+这里 $(r)_j=r!/(r-j)!$ 为下降阶乘；该公式是“沿直线的线性关系”的来源。
 \end{remark}
 
 \section{广义二项式定理（三项式公式）}\label{sec:trinomial}
@@ -142,10 +145,12 @@ $Y^BX^{p+1}=\sum_j(-1)^j\frac{B!}{(B-j)!}\binom{p+1}{j}X^{p+1-j}Y^{B-j}Z^j$，
 它等价于 $YX^{a}=X^{a}Y-aX^{a-1}Z$（即 $[X^a,Y]=aX^{a-1}Z$，$Z$ 中心）。
 设 $(\star)$ 对 $n$ 成立。固定 $A+B+2K=n+1$。$(X+Y)\cdot$ 右端中 $X^{A}Y^{B}Z^{K}$ 的系数来自
 \[
-\frac{n!}{(A-1)!B!K!}\Bigl(-\tfrac12\Bigr)^{K}
-+\frac{n!}{A!(B-1)!K!}\Bigl(-\tfrac12\Bigr)^{K}
--A\cdot\frac{n!}{A!B!(K-1)!}\Bigl(-\tfrac12\Bigr)^{K-1}
-=\frac{(n+1)!}{A!B!K!}\Bigl(-\tfrac12\Bigr)^{K},
+\begin{aligned}
+&\frac{n!}{(A-1)!B!K!}\Bigl(-\tfrac12\Bigr)^{K}
++\frac{n!}{A!(B-1)!K!}\Bigl(-\tfrac12\Bigr)^{K}\\
+&\qquad -(A+1)\frac{n!}{(A+1)!B!(K-1)!}\Bigl(-\tfrac12\Bigr)^{K-1}\\
+&=\frac{(n+1)!}{A!B!K!}\Bigl(-\tfrac12\Bigr)^{K}.
+\end{aligned}
 \]
 （越界项为 $0$；最后一步用 $A+B+2K=n+1$。）这正是 $(\star)$ 在 $n+1$ 时的系数，而 $n=0$ 时两端都是 $1$。
 \end{proof}
@@ -158,17 +163,18 @@ $e^{tX}e^{tY}=e^{t(X+Y)+\frac{t^{2}}{2}Z}$，即 $e^{t(X+Y)}=e^{-\frac{t^{2}}{2}
 \end{proof}
 
 \begin{corollary}[按 $Z$ 幂次分解]\label{cor:zdecomp}
-记 $B_m=\sum_{a+b=m}\frac{X^{a}Y^{b}}{a!b!}=[t^{m}]e^{tX}e^{tY}\in\K[X,Y]$（齐次，次数 $m$）。则
+记 $B_m=\sum_{a+b=m}\frac{X^{a}Y^{b}}{a!b!}=[t^{m}]e^{tX}e^{tY}$（正规序齐次元，次数 $m$）。则
 \[
 (X+Y)^{n}=\sum_{k=0}^{\lfloor n/2\rfloor}\frac{(-1)^{k}n!}{2^{k}k!}\,Z^{k}B_{n-2k}.
 \]
 \end{corollary}
 
 \begin{remark}[指数 $2p+2q+1$ 的“量子修正”解读]
-在交换情形（$Z=0$）下，$(X+Y)^{N}\in(X^{p+1},Y^{q+1})$ 当且仅当 $N\ge p+q+1$。
+在交换多项式环 $\K[X,Y]$ 中，$(X+Y)^{N}\in(X^{p+1},Y^{q+1})$ 当且仅当 $N\ge p+q+1$。
 在非交换情形，$Z$ 的幂次把 $(X+Y)^N$ 的分量向“高 $Z$、低 $XY$ 次数”推移；
 而左理想 $I$ 只能吸收 $Z$ 的有限多个幂次，于是临界次数加倍：
-$N=2(p+q)+1$。主报告的定理给出严格证明，第 \ref{sec:linear-algebra} 节的精确计算表明它不能再改进。
+$N=2(p+q)+1$。主报告的主定理给出上界，最优性一节的全参数张量构造给出不能改进的下界；
+第 \ref{sec:linear-algebra} 节的精确计算另作有限范围的一致性检查。
 \end{remark}
 
 \section{左理想与双边理想：一个必须警惕的陷阱}\label{sec:onesided}
@@ -188,14 +194,14 @@ $AX^{2}A+AY^{2}A$。
 \end{example}
 
 \begin{proposition}[双边版本成立，但不足]
-设 $R$ 特征零，$x,y\in R$，$z=[x,y]$ 中心，$x^{p+1}=y^{q+1}=0$（元素等式）。则
+设 $\K$ 是特征零域，$R$ 是结合 $\K$-代数，$x,y\in R$，$z=[x,y]$ 中心，$x^{p+1}=y^{q+1}=0$（元素等式）。则
 $(x+y)^{2p+2q+1}=0$。
 \end{proposition}
 
 \begin{proof}
 由 $x^{p+1}=0$ 与引理 \ref{lem:central}，对 $m\ge1$ 有
 $0=x^{p+1}y^{m}=\sum_{j=1}^{\min(p+1,m)}\binom{p+1}{j}\frac{m!}{(m-j)!}y^{m-j}z^{j}x^{p+1-j}$。
-对 $J=1,\dots,p+1$ 取 $m=J$ 作降 $J$ 归纳（$j<J$ 项由归纳假设为零），得 $z^{J}x^{p+1-J}=0$；
+对 $J=1,\dots,p+1$ 取 $m=J$ 作递增归纳（$j<J$ 项由归纳假设为零），得到 $\binom{p+1}{J}J!\,z^{J}x^{p+1-J}=0$；因该正整数在 $\K$ 中可逆，得 $z^{J}x^{p+1-J}=0$；
 同理 $z^{J}y^{q+1-J}=0$。于是 $a\le p$、$k+a\ge p+1$ 时
 $z^{k}x^{a}=z^{k-(p+1-a)}(z^{p+1-a}x^{a})=0$。代入定理 \ref{thm:tri}：$a\ge p+1$ 或 $b\ge q+1$
 的项为零；其余项若 $k+a\ge p+1$ 则为零，否则 $k+b=N-a-k\ge N-p=p+2q+1\ge q+1$ 亦为零。
@@ -209,7 +215,8 @@ $AX^{p+1}A+AY^{q+1}A$，\textbf{推不出} $(X+Y)^{N}\in I$（由上面的例子
 
 \section{沿直线的线性方程组}\label{sec:line}
 
-\noindent\textbf{设置。}固定 $p,q$、$N=2p+2q+1$ 与 $\delta\in\Z$。令
+\noindent\textbf{设置。}固定非负整数 $p,q$、$N=2p+2q+1$，以及满足
+$|\delta|\le N$、$\delta\equiv N\pmod2$ 的整数 $\delta$。令
 \[
 M=\frac{N-\delta}{2},\qquad P_b=X^{b+\delta}Y^{b}Z^{M-b}\qquad(b\in\Z),
 \]
@@ -224,8 +231,13 @@ $u_b:=$ $P_b$ 在 $M=A/I$ 中的类（无意义的 $b$ 约定 $u_b=0$）。
 \end{lemma}
 
 \begin{proof}
-由引理 \ref{lem:central}（取 $n=p+1$，$B=b$）与 $Z$ 的中心性，
-$(X^{b+\delta-p-1}Y^{b}Z^{M-b})X^{p+1}=\sum_j(-1)^jc_{b,j}X^{b+\delta-j}Y^{b-j}Z^{M-b+j}$，
+由正规序公式（取 $B=b$）与 $Z$ 的中心性，
+\[
+\begin{aligned}
+&(X^{b+\delta-p-1}Y^{b}Z^{M-b})X^{p+1}\\
+&\quad=\sum_j(-1)^jc_{b,j}X^{b+\delta-j}Y^{b-j}Z^{M-b+j}.
+\end{aligned}
+\]
 右端第 $j$ 项正是 $P_{b-j}$；左端属于 $I$。
 \end{proof}
 
@@ -258,26 +270,28 @@ $c$ 作为 $f$ 的根的重数不超过 $k-1$。
 \end{lemma}
 
 \begin{proof}
-用伸缩 $t\mapsto t/c$（$c\ne0$）可把 $c$ 化为 $1$，且不改变非零系数的个数与根的重数。
+取 $g(t)=f(ct)$（$c\ne0$）可把 $c$ 化为 $1$，且不改变非零系数的个数与根的重数。
 于是设 $f=\sum_{i=1}^{k}a_it^{e_i}$，$e_1<\cdots<e_k$。
 若 $f$ 在 $t=1$ 的重数 $\ge k$，则 $f^{(j)}(1)=0$（$j=0,\dots,k-1$），即
 $\sum_i a_i\,(e_i)_j=0$，其中 $(e)_j=e(e-1)\cdots(e-j+1)$ 是首一 $j$ 次多项式。
 矩阵 $\bigl((e_i)_j\bigr)_{j,i}$（$k\times k$）的第 $j$ 行是首一 $j$ 次多项式在 $e=e_i$ 处的取值，
-故它等于 Vandermonde 矩阵 $\bigl(e_i^{\,j}\bigr)$ 的左乘一个单位上三角矩阵（把 $e^j$ 换成 $(e)_j$），
+故它等于 Vandermonde 矩阵 $\bigl(e_i^{\,j}\bigr)$ 的左乘一个单位下三角矩阵（把 $e^j$ 换成 $(e)_j$），
 行列式 $\prod_{i<i'}(e_{i'}-e_i)\ne0$。于是 $a_i=0$，与 $f\ne0$ 矛盾。
 \end{proof}
 
 \begin{remark}[取等例子与失效边界]
 $(t-c)^{k-1}$ 恰有 $k$ 个非零系数且重数为 $k-1$，故界是精确的。
-本引理在正特征下失效（$t^{p}-t$ 之类），因此主定理的证明必须假定 $\chr\K=0$——
+本引理在素特征 $r$ 下失效：$t^r-1=(t-1)^r$ 只有两项，却在 $1$ 有重数 $r$。因此本证明使用 $\chr\K=0$——
 与 Conjecture A.1 的假设一致。
 \end{remark}
 
 \section{精确有理数线性代数核验}\label{sec:linear-algebra}
 
+本节限定 $\K=\Q$，计算输入均为有理数，范围以列出的参数为准。
+
 \subsection{算法}
-对每个次数 $d$：枚举 $A_d$ 的基 $\{(a,b,k):a+b+2k=d\}$；按引理 \ref{lem:central}（$n=p+1$）
-与 $A_{d-q-1}Y^{q+1}=\{X^aY^{b+q+1}Z^k\}$ 生成 $I_d$ 的生成元；
+对每个次数 $d$：枚举 $A_d$ 的基 $\{(a,b,k):a+b+2k=d\}$。
+用注 \ref{rem:normal} 的正规序公式展开 $A_{d-p-1}X^{p+1}$，另列出 $A_{d-q-1}Y^{q+1}$，得到 $I_d$ 的生成元；
 以 $\Q$ 上的 Gauss 消元（\texttt{Fraction} 精确算术）求 $A_d/I_d$ 的坐标；
 最后逐步计算 $v_{n+1}=\mathrm{reduce}((X+Y)v_n)$，$v_0=1$。
 判据：$v_n=0$ 当且仅当 $(X+Y)^n\in I$。
@@ -285,13 +299,17 @@ $(t-c)^{k-1}$ 恰有 $k$ 个非零系数且重数为 $k-1$，故界是精确的�
 \subsection{输出}
 \begin{itemize}[leftmargin=2em]
 \item 最小幂零指数：对 $0\le p,q\le6$（49 组）恒有
-$\min\{n:(X+Y)^nv_0=0\}=2p+2q+1$，与主定理一致且说明指数不可改进。
-\item $Z$ 的幂零指数：恒为 $p+q+1$。
-\item Hilbert 函数 $\dim M_d$（例如 $(p,q)=(4,4)$ 时为
-$1,2,4,6,9,10,12,12,13,12,12,10,9,6,4,2,1,0,\dots$），最高非零次数 $=2p+2q$。
+$\min\{n:(X+Y)^nv_0=0\}=2p+2q+1$，与主定理及其全参数最优性构造一致。
+\item $Z$ 的幂零指数：在所列计算范围内为 $p+q+1$；一般结论由主报告的最优性一节给出。
+\item Hilbert 函数 $\dim M_d$：例如 $(p,q)=(4,4)$ 时依次为
+\[
+1,2,4,6,9,10,12,12,13,12,12,10,9,6,4,2,1,0,\dots.
+\]
+在所列样本中，最高非零次数为 $2p+2q$。
 \item 逐项核验：三项式公式（$n\le8$）、正规序公式（$p,B\le5$）、直线关系
 （$p\le3$，$p+1\le A\le p+4$，$B\le4$，$K\le2$）、三角形子式的列满秩性（$p,q\le4$）、
-少项式计数条件（$p,q\le5$）、以及“$Z^kB_m\in I\iff 2k+m\ge2p+2q+1$”（$p,q\le4$）。
+少项式计数条件（$p,q\le5$）、以及 $2k+m\ge2p+2q+1\Rightarrow Z^kB_m\in I$ 的充分方向。
+逆方向不成立：$p=1,q=0$ 时 $B_2=X^2/2+XY+Y^2/2\in AX^2+AY$，而 $2<3$。
 \end{itemize}
 
 \subsection{地位}

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Verification of the three ingredients of the proof of Conjecture A.1.
+Finite exact checks of three ingredients of the proof of Conjecture A.1.
 
 Setup.  A = U(h_1) = K<X,Y,Z>/([X,Y]=Z, Z central), I = A X^{p+1} + A Y^{q+1}.
 Fix N and delta = a-b (a = X-power, b = Y-power).  The monomials
@@ -32,8 +32,10 @@ def c(B, j, p):
 # ---------- 1. the normal-ordering relation Y^B X^{p+1} ----------
 print("=== 1. Y^B X^{p+1} = sum_j (-1)^j c_{B,j} X^{p+1-j} Y^{B-j} Z^j ? ===")
 ok = True
+normal_count = 0
 for p in range(0, 6):
     for B in range(0, 6):
+        normal_count += 1
         lhs = mul(pw(Y, B), pw(X, p + 1))
         rhs = {}
         for j in range(0, min(B, p + 1) + 1):
@@ -42,15 +44,18 @@ for p in range(0, 6):
         if add(lhs, rhs, -1) != {}:
             ok = False
             print("   FAIL p=%d B=%d" % (p, B))
-print("   all (p,B) with p,B<=5 :", ok)
+assert ok, "normal-ordering identity failed"
+print("   %d normal-ordering identities, p,B=0..5 : %s" % (normal_count, ok))
 
 # the full "key relation" inside A, including the left factor X^{A-p-1} Z^K
 print("   checking the key relation (X^{A-p-1}Y^B Z^K)X^{p+1} in A ...")
 ok = True
+key_count = 0
 for p in range(0, 4):
     for A in range(p + 1, p + 5):
         for B in range(0, 5):
             for K in range(0, 3):
+                key_count += 1
                 f = mul(mul(pw(X, A - p - 1), pw(Y, B)), pw(Z, K))
                 lhs = mul(f, pw(X, p + 1))
                 rhs = {}
@@ -59,7 +64,8 @@ for p in range(0, 4):
                 if add(lhs, rhs, -1) != {}:
                     ok = False
                     print("   FAIL", p, A, B, K)
-print("   key relation holds :", ok)
+assert ok, "key relation failed"
+print("   %d key-relation identities : %s" % (key_count, ok))
 
 # ---------- 2. triangular / rank checks ----------
 def det(mat):
@@ -90,9 +96,14 @@ def det(mat):
 print()
 print("=== 2. the triangular submatrices  (N = 2p+2q+1) ===")
 allok = True
+line_counts = {"positive triangular": 0, "negative triangular": 0, "middle": 0}
+top_degree_count = 0
 for p in range(0, 5):
     for q in range(0, 5):
         N = 2 * p + 2 * q + 1
+        quotient = Quotient(p, q, N)
+        assert len(quotient.reduced[N]) == len(quotient.basis[N]), (p, q, N)
+        top_degree_count += 1
         for delta in range(-N, N + 1):
             if (N - delta) % 2 != 0:
                 continue
@@ -105,6 +116,9 @@ for p in range(0, 5):
             rows = list(range(b0, M + 1))               # equations
             if not cols:
                 continue
+            case = ("positive triangular" if delta >= p + 1 else
+                    "negative triangular" if delta < 0 else "middle")
+            line_counts[case] += 1
             # full column rank ?  build the matrix and compute rank
             A_ = [[(-1) ** (b - cc) * c(b, b - cc, p) if 0 <= b - cc <= p + 1 else F(0)
                    for cc in cols] for b in rows]
@@ -131,11 +145,15 @@ for p in range(0, 5):
             if rank != ncol:
                 allok = False
                 print("   RANK DEFICIENT: p=%d q=%d delta=%d  rank=%d < %d" % (p, q, delta, rank, ncol))
-print("   full column rank for all p,q<=4 and all delta :", allok)
+assert allok, "line matrix has deficient column rank"
+print("   %d nonempty line matrices have full column rank : %s" % (sum(line_counts.values()), allok))
+print("   line cases:", line_counts)
+print("   %d complete quotient matrices satisfy I_N=A_N" % top_degree_count)
 
 # explicit triangular determinants in the two triangular cases
 print()
 print("   explicit triangular submatrices:")
+determinant_count = 0
 for (p, q, delta) in [(1, 1, 3), (2, 2, 3), (2, 3, 4), (3, 3, 4), (2, 2, -1), (2, 3, -1), (3, 3, -3), (2, 3, -3)]:
     N = 2 * p + 2 * q + 1
     if (N - delta) % 2 != 0:
@@ -150,16 +168,25 @@ for (p, q, delta) in [(1, 1, 3), (2, 2, 3), (2, 3, 4), (3, 3, 4), (2, 2, -1), (2
         K = min(M, q)
         sub = [[(-1) ** (b - cc) * c(b, b - cc, p) if 0 <= b - cc <= p + 1 else F(0)
                 for cc in range(0, K + 1)] for b in range(0, K + 1)]
-        print("   delta=%d>=p+1 : lower-triangular K=%d, det=%s, diag=1" % (delta, K, det(sub)))
+        determinant = det(sub)
+        assert determinant == 1, (p, q, delta, sub)
+        determinant_count += 1
+        print("   delta=%d>=p+1 : lower-triangular K=%d, det=%s, diag=1" % (delta, K, determinant))
     elif delta <= -1:
         K = q - bmin
         sub = [[(-1) ** (b - cc) * c(b, b - cc, p) if 0 <= b - cc <= p + 1 else F(0)
                 for cc in range(bmin, bmin + K + 1)] for b in range(b0, b0 + K + 1)]
-        print("   delta=%d<=-1 : upper-triangular size %d, det=%s" % (delta, K + 1, det(sub)))
+        assert b0 + K <= M, (p, q, delta)
+        determinant = det(sub)
+        assert determinant != 0, (p, q, delta, sub)
+        determinant_count += 1
+        print("   delta=%d<=-1 : upper-triangular size %d, det=%s" % (delta, K + 1, determinant))
+print("   %d nonempty determinant examples checked" % determinant_count)
 
 # ---------- 3. the support count in the case 1 <= delta <= p ----------
 print()
 print("=== 3. support count  k <= p+1  for  1 <= delta <= p  (N = 2p+2q+1) ===")
+support_count = 0
 for p in range(1, 6):
     for q in range(0, 6):
         N = 2 * p + 2 * q + 1
@@ -170,6 +197,9 @@ for p in range(1, 6):
             b0 = max(p + 1 - delta, 0)
             degU = min(q, M)
             k = b0 + max(0, degU + p + 1 - M)
-            if k > p + 1:
-                print("   BOUND TOO WEAK p=%d q=%d delta=%d : k=%d > p+1=%d" % (p, q, delta, k, p + 1))
-print("   (no output = the count k <= p+1 always holds)")
+            assert 0 <= b0 <= M and degU == q, (p, q, delta, b0, M)
+            assert k <= p + 1, (p, q, delta, k)
+            support_count += 1
+print("   %d support bounds and endpoint conditions checked" % support_count)
+
+print("PASS: finite exact line-matrix, relation and support-count checks only")

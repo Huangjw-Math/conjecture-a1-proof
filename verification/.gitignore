@@ -1,0 +1,4 @@
+# Raw local transcripts can contain paths in tracebacks. Publish the review,
+# not machine-specific output from a run or the previous audit directory.
+/results/
+/audit-*/

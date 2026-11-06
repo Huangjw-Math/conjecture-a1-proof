@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Independent exact checks (char 0, rational arithmetic) of every intermediate
-statement used in the proof.  These are consistency checks, NOT proofs.
+Exact rational consistency checks and regressions for refuted intermediate
+claims. These are finite computations, NOT a proof of the conjecture.
 
 A = U(h_1) = K<X,Y,Z>/([X,Y]=Z, Z central), PBW basis X^a Y^b Z^k.
 Normal-ordering rule used:  Y^b X^n = sum_j (-1)^j C(b,j) C(n,j) j! X^{n-j} Y^{b-j} Z^j.
@@ -51,66 +51,49 @@ def shows(e):
         return "0"
     return " + ".join("%s*X^%dY^%dZ^%d" % (c, m[0], m[1], m[2]) for m, c in sorted(e.items()))
 
-# ---------- 1. the trinomial / generalized binomial formula ----------
-print("=== CHECK 1: (X+Y)^n = sum_{a+b+2k=n} n!/(a!b!k!) (-1/2)^k X^a Y^b Z^k ===")
-XdY = add(X, Y)
-ok = True
-for n in range(0, 9):
-    lhs = pw(XdY, n)
-    rhs = {}
-    for k in range(0, n // 2 + 1):
-        for a in range(0, n - 2 * k + 1):
-            b = n - 2 * k - a
-            c = F(factorial(n), factorial(a) * factorial(b) * factorial(k)) * F((-1) ** k, 2 ** k)
-            rhs[(a, b, k)] = rhs.get((a, b, k), F(0)) + c
-    rhs = {kk: v for kk, v in rhs.items() if v != 0}
-    same = add(lhs, rhs, -1) == {}
-    ok = ok and same
-    print("  n=%d : identity holds = %s" % (n, same))
-print("  ALL:", ok)
+def main():
+    print("=== exact normal-ordering identity, 0 <= n <= 8 ===")
+    for n in range(9):
+        lhs = pw(add(X, Y), n)
+        rhs = {}
+        for k in range(n // 2 + 1):
+            for a in range(n - 2 * k + 1):
+                b = n - 2 * k - a
+                rhs[(a, b, k)] = (F(factorial(n), factorial(a) * factorial(b) * factorial(k))
+                                     * F((-1) ** k, 2 ** k))
+        assert add(lhs, rhs, -1) == {}, n
+    print("PASS: 9 PBW identities")
 
-# ---------- 2. key lemma: Z^J X^{p+1-J} in I and Z^J Y^{q+1-J} in I ----------
-print()
-print("=== CHECK 2: Z^J X^{p+1-J} = 0 mod I and Z^J Y^{q+1-J} = 0 mod I ===")
-for p in range(0, 5):
-    for q in range(0, 5):
-        maxdeg = 2 * (p + q) + 6
-        Q = Quotient(p, q, maxdeg)
-        bad = []
-        for J in range(1, p + 2):
-            e = mul(pw(Z, J), pw(X, p + 1 - J))
-            d = 2 * J + (p + 1 - J)
-            if Q.reduce(e, d):
-                bad.append(("X", J))
-        for J in range(1, q + 2):
-            e = mul(pw(Z, J), pw(Y, q + 1 - J))
-            d = 2 * J + (q + 1 - J)
-            if Q.reduce(e, d):
-                bad.append(("Y", J))
-        if bad:
-            print("  p=%d q=%d  FAILED: %s" % (p, q, bad))
-print("  (no output above means: all these elements reduce to 0 in M_{p,q}, p,q<=4)")
+    # The historical one-sided lemma is FALSE for a left ideal. These
+    # nonmembership checks prevent its accidental restoration as a premise.
+    Q = Quotient(0, 1, 3)
+    assert Q.reduce(Z, 2), "Z is nonzero in M_(0,1)"
+    Q11 = Quotient(1, 1, 5)
+    assert Q11.reduce(mul(Z, X), 3), "ZX is nonzero in M_(1,1)"
+    assert Q11.reduce(mul(Z, Y), 3), "ZY is nonzero in M_(1,1)"
+    assert Q11.reduce(pw(Z, 2), 4), "Z^2 is nonzero in M_(1,1)"
+    B4 = {(a, 4-a, 0): F(1, factorial(a) * factorial(4-a)) for a in range(5)}
+    assert Q11.reduce(B4, 4) == {}, "B4 lies in I although degree 4 < N=5"
+    assert Q11.reduce(pw(add(X, Y), 4), 4), "T^4 remains nonzero"
+    print("PASS: false one-sided lemma and false B_m iff threshold regressions")
+    print("  p=q=1: B4=0, Z^2!=0, T^4!=0 modulo I; N=5")
 
-# ---------- 3. nilpotency index of Z and of X+Y ----------
-print()
-print("=== CHECK 3: minimal n with Z^n = 0, and minimal n with (X+Y)^n = 0, in M_{p,q} ===")
-for p in range(0, 5):
-    row = []
-    for q in range(0, 5):
-        maxdeg = 4 * (p + q) + 10
-        Q = Quotient(p, q, maxdeg)
-        zmin = None
-        for n in range(0, maxdeg // 2 + 1):
-            e = pw(Z, n)
-            d = 2 * n
-            if Q.reduce(e, d) == {}:
-                zmin = n
-                break
-        vs = T_powers(p, q, maxdeg)
-        tmin = None
-        for n in range(0, maxdeg + 1):
-            if not vs[n]:
-                tmin = n
-                break
-        row.append("(%d,%d) Z^%s (X+Y)^%s" % (p, q, zmin, tmin))
-    print("   ".join(row))
+    print("=== exact nilpotence indices, 0 <= p,q <= 4 ===")
+    for p in range(5):
+        row = []
+        for q in range(5):
+            N = 2 * (p + q) + 1
+            Q = Quotient(p, q, N + 1)
+            zmin = next((n for n in range(p + q + 2)
+                         if Q.reduce(pw(Z, n), 2*n) == {}), None)
+            vs = T_powers(p, q, N)
+            tmin = next((n for n, value in enumerate(vs) if not value), None)
+            assert zmin == p + q + 1, (p, q, zmin)
+            assert tmin == N, (p, q, tmin)
+            row.append("(%d,%d) Z^%s T^%s" % (p, q, zmin, tmin))
+        print("   ".join(row))
+    print("PASS: 25 exact index pairs; finite evidence only")
+
+
+if __name__ == "__main__":
+    main()
